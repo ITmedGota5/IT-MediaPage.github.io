@@ -1,0 +1,41 @@
+# 🔐 Miljövariabler (hemligheter)
+.env
+.env.local
+.env.*.local
+
+# 📦 Node dependencies
+node_modules/
+
+# 📄 Loggar
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# 🧱 Build / dist (om du bygger frontend senare)
+dist/
+build/
+
+# 📁 Uploads (valfri – kommentera bort om du VILL ha med bilderna)
+uploads/
+
+# 🗄️ Databas / data dumps
+*.sql
+*.sqlite
+*.db
+
+# 💻 Systemfiler
+.DS_Store
+Thumbs.db
+
+# 🧪 Temporära filer
+.tmp/
+.temp/
+.cache/
+
+# ⚙️ Editor-specifika filer
+.vscode/
+.idea/
+
+# 🔁 OS / Git skräp
+*.swp

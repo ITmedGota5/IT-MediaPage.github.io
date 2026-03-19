@@ -1,19 +1,19 @@
-require('dotenv').config(); // Load .env variables
 const express = require('express');
 const multer = require('multer');
 const cors = require('cors');
+const path = require('path'); // <-- THIS WAS MISSING
+require('dotenv').config();
 const { createClient } = require('@supabase/supabase-js');
 
 const app = express();
 const PORT = 3000;
 
-// --- CONFIGURATION ---
-// Initialize Supabase Client (use Service Role for backend admin tasks)
+// --- SUPABASE SETUP ---
 const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_SERVICE_KEY;
+const supabaseKey = process.env.SUPABASE_SERVICE_KEY; // Use Service Key for backend admin rights
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-// --- AUTH CONFIGURATION (Kept your existing simple auth) ---
+// --- AUTH CONFIGURATION ---
 const ADMIN_PASSWORD = 'admin123'; 
 const validTokens = new Set();
 
@@ -22,12 +22,11 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Multer Setup (Store files in memory temporarily before sending to Supabase)
+// --- MULTER CONFIG (Memory Storage for Supabase) ---
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
 // --- AUTH ROUTES ---
-
 app.post('/api/login', (req, res) => {
     const { password } = req.body;
     if (password === ADMIN_PASSWORD) {
@@ -52,109 +51,81 @@ const checkAuth = (req, res, next) => {
 
 // 1. PROJECTS
 app.get('/api/projects', async (req, res) => {
-    const { data, error } = await supabase
-        .from('projects')
-        .select('*')
-        .order('id', { ascending: false });
-    
+    const { data, error } = await supabase.from('projects').select('*').order('id', { ascending: false });
     if (error) return res.status(500).json({ error: error.message });
     res.json(data);
 });
 
 app.post('/api/projects', checkAuth, async (req, res) => {
-    const { data, error } = await supabase
-        .from('projects')
-        .insert([req.body])
-        .select();
-    
+    const { data, error } = await supabase.from('projects').insert([req.body]).select();
     if (error) return res.status(500).json({ error: error.message });
     res.status(201).json(data[0]);
 });
 
 app.put('/api/projects/:id', checkAuth, async (req, res) => {
     const id = req.params.id;
-    const { data, error } = await supabase
-        .from('projects')
-        .update(req.body)
-        .eq('id', id)
-        .select();
-
+    const { data, error } = await supabase.from('projects').update(req.body).eq('id', id).select();
     if (error) return res.status(500).json({ error: error.message });
     res.json(data[0]);
 });
 
 app.delete('/api/projects/:id', checkAuth, async (req, res) => {
     const id = req.params.id;
-    const { error } = await supabase
-        .from('projects')
-        .delete()
-        .eq('id', id);
-
+    const { error } = await supabase.from('projects').delete().eq('id', id);
     if (error) return res.status(500).json({ error: error.message });
     res.json({ message: 'Deleted' });
 });
 
-
-// 2. MEDIA (Gallery)
+// 2. MEDIA
 app.get('/api/media', async (req, res) => {
-    const { data, error } = await supabase
-        .from('media')
-        .select('*')
-        .order('id', { ascending: false });
-
+    const { data, error } = await supabase.from('media').select('*').order('id', { ascending: false });
     if (error) return res.status(500).json({ error: error.message });
     res.json(data);
 });
 
-// Upload Image (Upload to Supabase Storage, then save URL to DB)
 app.post('/api/media', checkAuth, upload.single('image'), async (req, res) => {
     if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
 
     const file = req.file;
     const fileExt = file.originalname.split('.').pop();
-    const fileName = `${Date.now()}.${fileExt}`; // Unique filename
-    const filePath = `public/${fileName}`; // Folder inside bucket
+    const fileName = `${Date.now()}.${fileExt}`;
+    const filePath = `public/${fileName}`; // Store in a 'public' folder inside the bucket
 
     // 1. Upload to Supabase Storage
-    const { data: uploadData, error: uploadError } = await supabase.storage
+    const { data: storageData, error: storageError } = await supabase.storage
         .from('images') // Bucket name
         .upload(filePath, file.buffer, {
-            cacheControl: '3600',
-            upsert: false,
-            contentType: file.mimetype
+            contentType: file.mimetype,
+            upsert: false
         });
 
-    if (uploadError) {
-        console.error(uploadError);
-        return res.status(500).json({ error: uploadError.message });
+    if (storageError) {
+        console.error(storageError);
+        return res.status(500).json({ error: 'Failed to upload image' });
     }
 
     // 2. Get Public URL
-    const { data: urlData } = supabase.storage
-        .from('images')
-        .getPublicUrl(filePath);
-
+    const { data: urlData } = supabase.storage.from('images').getPublicUrl(filePath);
     const publicUrl = urlData.publicUrl;
 
     // 3. Save metadata to Database
     const newItem = {
-        category: req.body.category,
         title: req.body.title,
+        category: req.body.category,
         src: publicUrl
     };
 
-    const { data: dbData, error: dbError } = await supabase
-        .from('media')
-        .insert([newItem])
-        .select();
-
-    if (dbError) return res.status(500).json({ error: dbError.message });
-    res.status(201).json(dbData[0]);
+    const { data, error: dbError } = await supabase.from('media').insert([newItem]).select();
+    
+    if (dbError) {
+        return res.status(500).json({ error: dbError.message });
+    }
+    
+    res.status(201).json(data[0]);
 });
 
 app.put('/api/media/:id', checkAuth, async (req, res) => {
     const id = req.params.id;
-    // Note: This logic only updates text. To change image, you'd need to delete old and upload new.
     const { data, error } = await supabase
         .from('media')
         .update({ title: req.body.title, category: req.body.category })
@@ -175,14 +146,12 @@ app.delete('/api/media/:id', checkAuth, async (req, res) => {
         .eq('id', id)
         .single();
 
-    // 2. Delete from Storage (Extract path from URL)
+    // 2. Delete from Storage
     if (item && item.src) {
         try {
             const urlParts = item.src.split('/');
-            const fileName = urlParts[urlParts.length - 1]; // get filename
-            const folder = urlParts[urlParts.length - 2]; // get 'public'
-            
-            // Construct the path relative to bucket: 'public/filename.jpg'
+            const fileName = urlParts[urlParts.length - 1];
+            const folder = urlParts[urlParts.length - 2]; // 'public'
             const pathInBucket = `${folder}/${fileName}`;
             
             await supabase.storage.from('images').remove([pathInBucket]);

@@ -1,65 +1,37 @@
+require('dotenv').config(); // Load .env variables
 const express = require('express');
 const multer = require('multer');
-const path = require('path');
-const fs = require('fs');
 const cors = require('cors');
+const { createClient } = require('@supabase/supabase-js');
 
 const app = express();
 const PORT = 3000;
 
-// --- AUTH CONFIGURATION ---
-const ADMIN_PASSWORD = 'admin123'; // Change this password!
-const validTokens = new Set(); // Store active tokens in memory
+// --- CONFIGURATION ---
+// Initialize Supabase Client (use Service Role for backend admin tasks)
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_SERVICE_KEY;
+const supabase = createClient(supabaseUrl, supabaseKey);
+
+// --- AUTH CONFIGURATION (Kept your existing simple auth) ---
+const ADMIN_PASSWORD = 'admin123'; 
+const validTokens = new Set();
 
 // Middleware
 app.use(cors());
 app.use(express.json());
-
-// Serve static files from the 'public' folder
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Serve uploaded images
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-
-// Ensure necessary folders exist
-const dataDir = path.join(__dirname, 'data');
-const uploadsDir = path.join(__dirname, 'uploads');
-
-if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir);
-if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir);
-
-// Helper functions for JSON database
-const getData = (filename) => {
-    const filePath = path.join(dataDir, filename);
-    if (!fs.existsSync(filePath)) return [];
-    const data = fs.readFileSync(filePath);
-    return JSON.parse(data);
-};
-
-const saveData = (filename, data) => {
-    const filePath = path.join(dataDir, filename);
-    fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
-};
-
-// --- CONFIGURATION FOR IMAGE UPLOADS (MUST BE DEFINED BEFORE ROUTES) ---
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, uploadsDir);
-    },
-    filename: (req, file, cb) => {
-        cb(null, Date.now() + path.extname(file.originalname));
-    }
-});
+// Multer Setup (Store files in memory temporarily before sending to Supabase)
+const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
-
 
 // --- AUTH ROUTES ---
 
-// Login Route
 app.post('/api/login', (req, res) => {
     const { password } = req.body;
     if (password === ADMIN_PASSWORD) {
-        const token = Math.random().toString(36).substring(2); // Simple random token
+        const token = Math.random().toString(36).substring(2);
         validTokens.add(token);
         res.json({ success: true, token });
     } else {
@@ -67,150 +39,173 @@ app.post('/api/login', (req, res) => {
     }
 });
 
-// Auth Middleware (Checks if user has a valid token)
 const checkAuth = (req, res, next) => {
     const token = req.headers['x-auth-token'];
     if (token && validTokens.has(token)) {
-        next(); // Allowed
+        next();
     } else {
         res.status(403).json({ error: 'Not authorized' });
     }
 };
 
-
 // --- API ROUTES ---
 
 // 1. PROJECTS
-// GET all projects
-app.get('/api/projects', (req, res) => {
-    const projects = getData('projects.json');
-    res.json(projects);
+app.get('/api/projects', async (req, res) => {
+    const { data, error } = await supabase
+        .from('projects')
+        .select('*')
+        .order('id', { ascending: false });
+    
+    if (error) return res.status(500).json({ error: error.message });
+    res.json(data);
 });
 
-// POST new project (Protected)
-app.post('/api/projects', checkAuth, (req, res) => {
-    const projects = getData('projects.json');
-    const newProject = { id: Date.now(), ...req.body };
-    projects.push(newProject);
-    saveData('projects.json', projects);
-    res.status(201).json(newProject);
+app.post('/api/projects', checkAuth, async (req, res) => {
+    const { data, error } = await supabase
+        .from('projects')
+        .insert([req.body])
+        .select();
+    
+    if (error) return res.status(500).json({ error: error.message });
+    res.status(201).json(data[0]);
 });
 
-// PUT (Update) project (Protected)
-app.put('/api/projects/:id', checkAuth, (req, res) => {
-    const id = parseInt(req.params.id);
-    let projects = getData('projects.json');
-    const index = projects.findIndex(item => item.id === id);
-    
-    if (index === -1) return res.status(404).json({ error: 'Not found' });
+app.put('/api/projects/:id', checkAuth, async (req, res) => {
+    const id = req.params.id;
+    const { data, error } = await supabase
+        .from('projects')
+        .update(req.body)
+        .eq('id', id)
+        .select();
 
-    projects[index] = { ...projects[index], ...req.body };
-    
-    saveData('projects.json', projects);
-    res.json(projects[index]);
+    if (error) return res.status(500).json({ error: error.message });
+    res.json(data[0]);
 });
 
-// DELETE project (Protected)
-app.delete('/api/projects/:id', checkAuth, (req, res) => {
-    const id = parseInt(req.params.id);
-    let projects = getData('projects.json');
-    const project = projects.find(p => p.id === id);
-    
-    if (project) {
-        projects = projects.filter(p => p.id !== id);
-        saveData('projects.json', projects);
-        res.json({ message: 'Deleted' });
-    } else {
-        res.status(404).json({ error: 'Not found' });
-    }
+app.delete('/api/projects/:id', checkAuth, async (req, res) => {
+    const id = req.params.id;
+    const { error } = await supabase
+        .from('projects')
+        .delete()
+        .eq('id', id);
+
+    if (error) return res.status(500).json({ error: error.message });
+    res.json({ message: 'Deleted' });
 });
 
 
 // 2. MEDIA (Gallery)
-// GET all media items
-app.get('/api/media', (req, res) => {
-    const media = getData('media.json');
-    res.json(media);
+app.get('/api/media', async (req, res) => {
+    const { data, error } = await supabase
+        .from('media')
+        .select('*')
+        .order('id', { ascending: false });
+
+    if (error) return res.status(500).json({ error: error.message });
+    res.json(data);
 });
 
-// POST new media (Upload Image + Data) (Protected)
-app.post('/api/media', checkAuth, upload.single('image'), (req, res) => {
+// Upload Image (Upload to Supabase Storage, then save URL to DB)
+app.post('/api/media', checkAuth, upload.single('image'), async (req, res) => {
     if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
 
-    const media = getData('media.json');
-    const newItem = {
-        id: Date.now(),
-        src: `/uploads/${req.file.filename}`,
-        category: req.body.category,
-        title: req.body.title
-    };
-    
-    media.push(newItem);
-    saveData('media.json', media);
-    res.status(201).json(newItem);
-});
+    const file = req.file;
+    const fileExt = file.originalname.split('.').pop();
+    const fileName = `${Date.now()}.${fileExt}`; // Unique filename
+    const filePath = `public/${fileName}`; // Folder inside bucket
 
-// PUT (Update) media item (Protected)
-app.put('/api/media/:id', checkAuth, (req, res) => {
-    const id = parseInt(req.params.id);
-    let media = getData('media.json');
-    const index = media.findIndex(item => item.id === id);
-    
-    if (index === -1) return res.status(404).json({ error: 'Not found' });
+    // 1. Upload to Supabase Storage
+    const { data: uploadData, error: uploadError } = await supabase.storage
+        .from('images') // Bucket name
+        .upload(filePath, file.buffer, {
+            cacheControl: '3600',
+            upsert: false,
+            contentType: file.mimetype
+        });
 
-    media[index] = { 
-        ...media[index], 
-        category: req.body.category, 
-        title: req.body.title 
-    };
-    
-    saveData('media.json', media);
-    res.json(media[index]);
-});
-
-// DELETE media item (Protected)
-app.delete('/api/media/:id', checkAuth, (req, res) => {
-    const id = parseInt(req.params.id);
-    let media = getData('media.json');
-    const item = media.find(m => m.id === id);
-    
-    if (item) {
-        const filePath = path.join(uploadsDir, path.basename(item.src));
-        if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
-        
-        media = media.filter(m => m.id !== id);
-        saveData('media.json', media);
-        res.json({ message: 'Deleted' });
-    } else {
-        res.status(404).json({ error: 'Not found' });
+    if (uploadError) {
+        console.error(uploadError);
+        return res.status(500).json({ error: uploadError.message });
     }
+
+    // 2. Get Public URL
+    const { data: urlData } = supabase.storage
+        .from('images')
+        .getPublicUrl(filePath);
+
+    const publicUrl = urlData.publicUrl;
+
+    // 3. Save metadata to Database
+    const newItem = {
+        category: req.body.category,
+        title: req.body.title,
+        src: publicUrl
+    };
+
+    const { data: dbData, error: dbError } = await supabase
+        .from('media')
+        .insert([newItem])
+        .select();
+
+    if (dbError) return res.status(500).json({ error: dbError.message });
+    res.status(201).json(dbData[0]);
 });
 
+app.put('/api/media/:id', checkAuth, async (req, res) => {
+    const id = req.params.id;
+    // Note: This logic only updates text. To change image, you'd need to delete old and upload new.
+    const { data, error } = await supabase
+        .from('media')
+        .update({ title: req.body.title, category: req.body.category })
+        .eq('id', id)
+        .select();
+
+    if (error) return res.status(500).json({ error: error.message });
+    res.json(data[0]);
+});
+
+app.delete('/api/media/:id', checkAuth, async (req, res) => {
+    const id = req.params.id;
+    
+    // 1. Get the item to find the image URL
+    const { data: item } = await supabase
+        .from('media')
+        .select('src')
+        .eq('id', id)
+        .single();
+
+    // 2. Delete from Storage (Extract path from URL)
+    if (item && item.src) {
+        try {
+            const urlParts = item.src.split('/');
+            const fileName = urlParts[urlParts.length - 1]; // get filename
+            const folder = urlParts[urlParts.length - 2]; // get 'public'
+            
+            // Construct the path relative to bucket: 'public/filename.jpg'
+            const pathInBucket = `${folder}/${fileName}`;
+            
+            await supabase.storage.from('images').remove([pathInBucket]);
+        } catch (err) {
+            console.log("Error deleting storage file, continuing DB delete");
+        }
+    }
+
+    // 3. Delete from Database
+    const { error } = await supabase.from('media').delete().eq('id', id);
+    
+    if (error) return res.status(500).json({ error: error.message });
+    res.json({ message: 'Deleted' });
+});
 
 // 3. CONTACT FORM
 app.post('/api/contact', (req, res) => {
     const { name, email, message } = req.body;
-    console.log(`New Contact Form Submission: Name: ${name}, Email: ${email}, Message: ${message}`);
+    console.log(`New Contact Form Submission: Name: ${name}, Email: ${email}`);
     res.status(200).json({ message: 'Message received' });
 });
-
 
 // Start Server
 app.listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}`);
-    
-    // Initialize default data files if they don't exist
-    if (!fs.existsSync(path.join(dataDir, 'projects.json'))) {
-        const defaultProjects = [
-            { id: 1, status: 'Pågående', title: 'Ny Webbkarta', description: 'Vi bygger en helt ny interaktiv karta för kommunen.', date: 'Start: Januari 2024', details: 'Detta projekt innefattar migrering från gamla GIS-system.', progress: 40 },
-            { id: 2, status: 'Pågående', title: 'Fiberutbyggnad Etapp 3', description: 'Utbyggnad av fibernätet till landsbygden.', date: 'Start: November 2023', details: 'Arbetet omfattar cirka 15 km grävning.', progress: 65 },
-            { id: 3, status: 'Avslutat', title: 'Upphandling Skol-IT', description: 'Nytt avtal för leverans av datorer och surfplattor.', date: 'Avslutat: December 2023', details: 'Totalt levererades 1200 enheter.', progress: 100 },
-            { id: 4, status: 'Pågående', title: 'Medborgarplattform', description: 'Utveckling av en ny plattform för digital dialog.', date: 'Start: Mars 2024', details: 'Plattformen kommer erbjuda e-tjänster.', progress: 20 },
-            { id: 5, status: 'Planerat', title: 'Säkerhetsuppdatering Intranät', description: 'Kommande uppgradering av det interna nätverket.', date: 'Start: September 2024', details: 'Planerat underhåll.', progress: 0 }
-        ];
-        saveData('projects.json', defaultProjects);
-    }
-    if (!fs.existsSync(path.join(dataDir, 'media.json'))) {
-        saveData('media.json', []);
-    }
 });

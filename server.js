@@ -167,6 +167,70 @@ app.delete('/api/media/:id', checkAuth, async (req, res) => {
     res.json({ message: 'Deleted' });
 });
 
+// POST new media (Upload Image + Data)
+app.post('/api/media', checkAuth, upload.single('image'), async (req, res) => {
+    try {
+        console.log("Starting upload process..."); // Log 1
+
+        if (!req.file) {
+            console.log("Error: No file uploaded");
+            return res.status(400).json({ error: 'No file uploaded' });
+        }
+
+        const file = req.file;
+        const fileExt = path.extname(file.originalname);
+        const fileName = `${Date.now()}${fileExt}`;
+        const filePath = `public/${fileName}`; // Path inside the bucket
+
+        console.log(`Uploading file: ${filePath}`); // Log 2
+
+        // 1. Upload to Supabase Storage
+        const { data: storageData, error: storageError } = await supabase.storage
+            .from('images') // Make sure this matches your bucket name exactly
+            .upload(filePath, file.buffer, {
+                contentType: file.mimetype,
+                upsert: false
+            });
+
+        if (storageError) {
+            console.error("Supabase Storage Error:", storageError); // Log 3
+            return res.status(500).json({ error: 'Failed to upload image to storage', details: storageError });
+        }
+
+        console.log("Upload successful, getting public URL..."); // Log 4
+
+        // 2. Get Public URL
+        const { data: urlData } = supabase.storage
+            .from('images')
+            .getPublicUrl(filePath);
+
+        const src = urlData.publicUrl;
+
+        // 3. Save to Database
+        const { data: dbData, error: dbError } = await supabase
+            .from('media')
+            .insert({ 
+                src: src, 
+                category: req.body.category, 
+                title: req.body.title 
+            })
+            .select()
+            .single();
+
+        if (dbError) {
+            console.error("Supabase DB Error:", dbError); // Log 5
+            return res.status(500).json({ error: 'Failed to save to database', details: dbError });
+        }
+
+        console.log("Media item created:", dbData); // Log 6
+        res.status(201).json(dbData);
+
+    } catch (err) {
+        console.error("Server Crash Error:", err); // Log 7
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
 // 3. CONTACT FORM
 app.post('/api/contact', (req, res) => {
     const { name, email, message } = req.body;

@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IT/MEDIA Höganäs - Start</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Open Sans Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Open Sans', 'sans-serif'],
+                        display: ['"Century Gothic"', '"Apple Gothic"', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            black: '#000000',
+                            white: '#FFFFFF',
+                            red: '#E30613',
+                            beige: '#B5A38F',
+                            blue: '#009FE3',
+                        },
+                        surface: {
+                            light: '#C7DEED',
+                            mist: '#E3EDF4',
+                            warm: '#F4F2EE',
+                            darkblue: '#00609C'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background-color: #FFFFFF;
+            color: #000000;
+        }
+
+        .font-display {
+            font-family: "Century Gothic", "Apple Gothic", sans-serif;
+            font-weight: 700;
+        }
+
+        .btn-primary {
+            background-color: #E30613;
+            color: white;
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            background-color: #b91c1c;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            border: 2px solid #009FE3;
+            color: #009FE3;
+            transition: all 0.3s ease;
+        }
+        .btn-secondary:hover {
+            background-color: #009FE3;
+            color: white;
+        }
+
+        .hero-section {
+            background: linear-gradient(135deg, #009FE3 0%, #C7DEED 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-pattern {
+            position: absolute;
+            inset: 0;
+            opacity: 0.1;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        .nav-link {
+            position: relative;
+            color: #000;
+            font-weight: 600;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: #E30613;
+            transition: width 0.3s ease;
+        }
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .mobile-menu {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-out;
+        }
+        .mobile-menu.open {
+            max-height: 1000px; 
+        }
+
+        /* Hide scrollbar for Chrome, Safari and Opera */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        /* Hide scrollbar for IE, Edge and Firefox */
+        .no-scrollbar {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <div class="flex items-center">
+                    <a href="index.html" class="flex items-center gap-3">
+                             <img src="https://www.hoganas.se/images/18.5b0e2a2a176843ef8f54be90/1611176929596/Hoganas-logo-h.svg" class="h-10 w-auto rounded">
+                        <span class="font-display text-xl md:text-2xl text-brand-black tracking-tight">IT/MEDIA <span class="text-brand-blue">Höganäs</span></span>
+                    </a>
+                </div>
+                
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="index.html" class="nav-link active text-sm uppercase tracking-wider">Start</a>
+                    <a href="media.html" class="nav-link text-sm uppercase tracking-wider">Bild & Film</a>
+                    <a href="projects.html" class="nav-link text-sm uppercase tracking-wider">Projekt</a>
+                    <a href="about.html" class="nav-link text-sm uppercase tracking-wider">Om Oss</a>
+
+                    <a href="#kontakt" class="nav-link text-sm uppercase tracking-wider">Kontakt</a>
+                    <button class="btn-primary px-6 py-2 rounded text-sm uppercase tracking-wider font-semibold">
+                        Mina Sidor
+                    </button>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <div class="md:hidden">
+                    <button id="mobile-menu-btn" class="text-brand-black p-2 focus:outline-none">
+                        <i class="fa-solid fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Container -->
+        <div id="mobile-menu" class="mobile-menu md:hidden bg-surface-darkblue">
+            <div class="px-4 py-6 space-y-6">
+                <a href="index.html" class="block text-white text-lg font-semibold hover:text-brand-red transition">Start</a>
+                <a href="media.html" class="block text-white text-lg font-semibold hover:text-brand-red transition">Bild & Film</a>
+                <a href="projects.html" class="block text-white text-lg font-semibold hover:text-brand-red transition">Projekt</a>
+                <a href="about.html" class="block text-white text-lg font-semibold hover:text-brand-red transition">Om Oss</a>
+                <a href="#kontakt" class="block text-white text-lg font-semibold hover:text-brand-red transition">Kontakt</a>
+                
+                <button class="w-full btn-primary px-6 py-3 rounded text-sm uppercase tracking-wider font-semibold mt-4">
+                    Mina Sidor
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section py-16 md:py-24 lg:py-32">
+        <div class="hero-pattern"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div class="text-center md:text-left">
+                    <h1 class="font-display text-4xl sm:text-5xl md:text-7xl text-white leading-tight mb-6">
+                        IT/MEDIA<br>
+                        <span class="text-brand-red">Höganäs</span>
+                    </h1>
+                    <p class="text-base sm:text-lg text-white/90 mb-8 leading-relaxed max-w-lg mx-auto md:mx-0">
+                        En kommun i framkant. Här hittar du våra digitala tjänster, IT-stöd och kommunikationskanaler.
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
+                        <a href="about.html" class="btn-primary px-8 py-3 rounded-full font-semibold inline-flex items-center justify-center gap-2">
+                            Om Oss <i class="fa-solid fa-users"></i>
+                        </a>
+                        <a href="media.html" class="btn-secondary bg-white/10 border-white text-white hover:bg-white hover:text-brand-blue px-8 py-3 rounded-full font-semibold text-center">
+                            Bild & Film
+                        </a>
+                    </div>
+                </div>
+                <div class="hidden md:block">
+                    <img src="Itmedia.png" alt="IT Media Tech" class="rounded-lg shadow-2xl border-4 border-white/20"/>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Image Scroller Section -->
+    <section id="tjanster" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="font-display text-3xl md:text-4xl lg:text-5xl text-brand-black mb-4">Våra Lösningar</h2>
+                <div class="w-16 h-1 bg-brand-red mx-auto mb-6"></div>
+                <p class="text-base md:text-lg text-gray-600 max-w-2xl mx-auto px-4">En överblick över våra fokusområden och tekniska lösningar.</p>
+            </div>
+
+            <!-- Scroller Container -->
+            <div class="relative group">
+                
+                <!-- Navigation Buttons -->
+                <button id="prevBtn" class="absolute left-2 top-1/2 -translate-y-1/2 z-20 bg-white/90 hover:bg-brand-red hover:text-white text-brand-black p-3 rounded-full shadow-lg transition duration-300 opacity-0 group-hover:opacity-100 focus:outline-none">
+                    <i class="fa-solid fa-chevron-left"></i>
+                </button>
+                <button id="nextBtn" class="absolute right-2 top-1/2 -translate-y-1/2 z-20 bg-white/90 hover:bg-brand-red hover:text-white text-brand-black p-3 rounded-full shadow-lg transition duration-300 opacity-0 group-hover:opacity-100 focus:outline-none">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </button>
+
+                <!-- Scrollable Track with Snap Logic -->
+                <div id="sliderTrack" class="flex gap-6 overflow-x-auto scroll-smooth no-scrollbar snap-x snap-mandatory pb-4 pt-2 px-2 -mx-2">
+                    
+                    <!-- Card 1 -->
+                    <div class="flex-shrink-0 w-80 md:w-96 snap-center">
+                        <div class="relative h-72 rounded-xl overflow-hidden shadow-lg group/card">
+                            <img src="https://picsum.photos/seed/digital-service/600/400.jpg" alt="Digitala Tjänster" class="w-full h-full object-cover transition-transform duration-500 group-hover/card:scale-110">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                            <div class="absolute bottom-0 left-0 right-0 p-6">
+                                <div class="bg-brand-red w-10 h-10 rounded-full flex items-center justify-center mb-3 text-white">
+                                    <i class="fa-solid fa-id-card"></i>
+                                </div>
+                                <h3 class="font-display text-xl text-white mb-1">Digitala E-tjänster</h3>
+                                <p class="text-white/80 text-sm">Hantera ärenden och betala fakturor via våra säkra portaler.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 2 -->
+                    <div class="flex-shrink-0 w-80 md:w-96 snap-center">
+                        <div class="relative h-72 rounded-xl overflow-hidden shadow-lg group/card">
+                            <img src="https://picsum.photos/seed/it-support-help/600/400.jpg" alt="IT Support" class="w-full h-full object-cover transition-transform duration-500 group-hover/card:scale-110">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                            <div class="absolute bottom-0 left-0 right-0 p-6">
+                                <div class="bg-brand-blue w-10 h-10 rounded-full flex items-center justify-center mb-3 text-white">
+                                    <i class="fa-solid fa-headset"></i>
+                                </div>
+                                <h3 class="font-display text-xl text-white mb-1">IT-Support</h3>
+                                <p class="text-white/80 text-sm">Direkt hjälp med uppkoppling och tekniska system.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 3 -->
+                    <div class="flex-shrink-0 w-80 md:w-96 snap-center">
+                        <div class="relative h-72 rounded-xl overflow-hidden shadow-lg group/card">
+                            <img src="https://picsum.photos/seed/cyber-security/600/400.jpg" alt="Säkerhet" class="w-full h-full object-cover transition-transform duration-500 group-hover/card:scale-110">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                            <div class="absolute bottom-0 left-0 right-0 p-6">
+                                <div class="bg-surface-darkblue w-10 h-10 rounded-full flex items-center justify-center mb-3 text-white">
+                                    <i class="fa-solid fa-shield-halved"></i>
+                                </div>
+                                <h3 class="font-display text-xl text-white mb-1">Integritet & Säkerhet</h3>
+                                <p class="text-white/80 text-sm">Skydd av data och GDPR informationssäkerhet.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 4 -->
+                    <div class="flex-shrink-0 w-80 md:w-96 snap-center">
+                        <div class="relative h-72 rounded-xl overflow-hidden shadow-lg group/card">
+                            <img src="https://picsum.photos/seed/web-development/600/400.jpg" alt="Webb" class="w-full h-full object-cover transition-transform duration-500 group-hover/card:scale-110">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                            <div class="absolute bottom-0 left-0 right-0 p-6">
+                                <div class="bg-brand-beige w-10 h-10 rounded-full flex items-center justify-center mb-3 text-brand-black">
+                                    <i class="fa-solid fa-code"></i>
+                                </div>
+                                <h3 class="font-display text-xl text-white mb-1">Webb & Utveckling</h3>
+                                <p class="text-white/80 text-sm">Våra interna system och externa webbplatser.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 5 -->
+                    <div class="flex-shrink-0 w-80 md:w-96 snap-center">
+                        <div class="relative h-72 rounded-xl overflow-hidden shadow-lg group/card">
+                            <img src="https://picsum.photos/seed/strategic-meeting/600/400.jpg" alt="Strategi" class="w-full h-full object-cover transition-transform duration-500 group-hover/card:scale-110">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                            <div class="absolute bottom-0 left-0 right-0 p-6">
+                                <div class="bg-brand-black w-10 h-10 rounded-full flex items-center justify-center mb-3 text-white border border-white/20">
+                                    <i class="fa-solid fa-lightbulb"></i>
+                                </div>
+                                <h3 class="font-display text-xl text-white mb-1">Digital Strategi</h3>
+                                <p class="text-white/80 text-sm">Framtidsplanering och digitalisering av kommunen.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Contact Banner -->
+    <section id="kontakt" class="bg-surface-darkblue py-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10">
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div class="text-center md:text-left">
+                    <h2 class="font-display text-3xl md:text-4xl text-white mb-6">Kontakta IT & Media</h2>
+                    <p class="text-white/80 mb-8">Har du frågor om digitala tjänster, IT-support eller kommunikation?</p>
+                    
+                    <div class="space-y-4 flex flex-col items-center md:items-start">
+                        <div class="flex items-center gap-4">
+                            <div class="bg-white/10 p-3 rounded">
+                                <i class="fa-solid fa-phone text-white"></i>
+                            </div>
+                            <div class="text-left">
+                                <p class="text-white/60 text-xs">IT-Support</p>
+                                <p class="text-white font-semibold">042-XX XX XX</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <div class="bg-white/10 p-3 rounded">
+                                <i class="fa-solid fa-envelope text-white"></i>
+                            </div>
+                            <div class="text-left">
+                                <p class="text-white/60 text-xs">E-post</p>
+                                <p class="text-white font-semibold">it-support@hoganas.se</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white/10 backdrop-blur p-6 sm:p-8 rounded-lg border border-white/20">
+                    <form class="space-y-4">
+                        <input type="text" placeholder="Ditt namn" class="w-full bg-transparent border-b border-white/40 py-2 text-white placeholder-white/60 focus:outline-none focus:border-white transition"/>
+                        <input type="email" placeholder="E-postadress" class="w-full bg-transparent border-b border-white/40 py-2 text-white placeholder-white/60 focus:outline-none focus:border-white transition"/>
+                        <textarea rows="3" placeholder="Beskriv ditt ärende..." class="w-full bg-transparent border-b border-white/40 py-2 text-white placeholder-white/60 focus:outline-none focus:border-white transition resize-none"></textarea>
+                        <button type="submit" class="w-full bg-brand-red text-white font-semibold py-3 rounded hover:bg-red-700 transition">
+                            Skicka Ärende
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-brand-black text-white py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Updated grid to 3 columns -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 mb-12 text-center sm:text-left">
+                <div>
+                    <h3 class="font-display text-xl mb-4">IT/MEDIA Höganäs</h3>
+                    <p class="text-gray-400 text-sm">Kommunhuset<br>Storgatan 1<br>263 83 Höganäs</p>
+                </div>
+                <!-- Removed "Digitalt" column -->
+                <div>
+                    <h4 class="font-semibold mb-4 text-sm uppercase">Information</h4>
+                    <ul class="space-y-2 text-gray-400 text-sm">
+                        <li><a href="about.html" class="hover:text-brand-red transition">Om Oss</a></li>
+                        <li><a href="#" class="hover:text-brand-red transition">Tillgänglighet</a></li>
+                        <li><a href="#" class="hover:text-brand-red transition">Cookies</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4 text-sm uppercase">Följ oss</h4>
+                    <div class="flex gap-4 justify-center sm:justify-start">
+                        <a href="#" class="text-white hover:text-brand-red transition text-xl">
+                            <i class="fa-brands fa-twitter"></i>
+                        </a>
+                        <a href="#" class="text-white hover:text-brand-red transition text-xl">
+                            <i class="fa-brands fa-facebook"></i>
+                        </a>
+                        <a href="#" class="text-white hover:text-brand-red transition text-xl">
+                            <i class="fa-brands fa-instagram"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center text-center md:text-left">
+                <p class="text-xs text-gray-500">© 2024 IT/MEDIA Höganäs. Alla rättigheter förbehållna.</p>
+                <div class="flex gap-6 mt-4 md:mt-0 justify-center">
+                    <a href="#" class="text-xs text-gray-500 hover:text-brand-red">Integritetspolicy</a>
+                    <a href="#" class="text-xs text-gray-500 hover:text-brand-red">GDPR</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // Mobile Menu Toggle
+        const menuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const icon = menuBtn.querySelector('i');
+
+        menuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('open');
+            if (mobileMenu.classList.contains('open')) {
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-times');
+            } else {
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            }
+        });
+
+        // Image Scroller Logic
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const sliderTrack = document.getElementById('sliderTrack');
+
+        const slideCards = (direction) => {
+            const card = sliderTrack.querySelector("div");
+            if (!card) return;
+            const cardWidth = card.offsetWidth + 24; 
+            sliderTrack.scrollBy({ left: cardWidth * direction, behavior: 'smooth' });
+        };
+
+        prevBtn.addEventListener('click', () => slideCards(-1));
+        nextBtn.addEventListener('click', () => slideCards(1));
+
+        // CONTACT FORM SUBMISSION
+        const contactForm = document.querySelector('#kontakt form');
+        if(contactForm) {
+            contactForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const name = contactForm.querySelector('input[type="text"]').value;
+                const email = contactForm.querySelector('input[type="email"]').value;
+                const message = contactForm.querySelector('textarea').value;
+
+                try {
+                    const response = await fetch('/api/contact', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ name, email, message })
+                    });
+                    
+                    if(response.ok) {
+                        alert('Tack! Ditt meddelande har skickats.');
+                        contactForm.reset();
+                    } else {
+                        alert('Något gick fel. Försök igen.');
+                    }
+                } catch (error) {
+                    console.error(error);
+                    alert('Kunde inte skicka meddelandet.');
+                }
+            });
+        }
+    </script>
+</body>
+</html>

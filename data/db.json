@@ -1,0 +1,49 @@
+{
+  "media": [
+    {
+      "id": 1,
+      "src": "https://picsum.photos/seed/hoganas-nature/600/800.jpg",
+      "category": "Natur",
+      "title": "Kustlandskap & Natur"
+    },
+    {
+      "id": 2,
+      "src": "https://picsum.photos/seed/hoganas-city/600/800.jpg",
+      "category": "Stadsliv",
+      "title": "Centrum & Handeln"
+    },
+    {
+      "id": 3,
+      "src": "https://picsum.photos/seed/hoganas-culture/600/800.jpg",
+      "category": "Kultur",
+      "title": "Kultur & Historia"
+    }
+  ],
+  "projects": [
+    {
+      "id": 1,
+      "status": "Pågående",
+      "title": "Ny Webbkarta",
+      "description": "Vi bygger en helt ny interaktiv karta för kommunen.",
+      "date": "Januari 2024",
+      "side": "left"
+    },
+    {
+      "id": 2,
+      "status": "Pågående",
+      "title": "Fiberutbyggnad Etapp 3",
+      "description": "Utbyggnad av fibernätet till landsbygden.",
+      "date": "November 2023",
+      "side": "right"
+    },
+    {
+      "id": 3,
+      "status": "Avslutat",
+      "title": "Upphandling Skol-IT",
+      "description": "Nytt avtal för leverans av datorer har tecknats.",
+      "date": "December 2023",
+      "side": "left"
+    }
+  ],
+  "contacts": []
+}

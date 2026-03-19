@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pågående Projekt - IT/MEDIA Höganäs</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Open Sans', 'sans-serif'], display: ['"Century Gothic"', '"Apple Gothic"', 'sans-serif'] },
+                    colors: {
+                        brand: { black: '#000000', white: '#FFFFFF', red: '#E30613', beige: '#B5A38F', blue: '#009FE3' },
+                        surface: { light: '#C7DEED', mist: '#E3EDF4', warm: '#F4F2EE', darkblue: '#00609C' }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Open Sans', sans-serif; background-color: #FFFFFF; color: #000000; }
+        .font-display { font-family: "Century Gothic", "Apple Gothic", sans-serif; font-weight: 700; }
+        .btn-primary { background-color: #E30613; color: white; transition: all 0.3s ease; }
+        .btn-primary:hover { background-color: #b91c1c; transform: translateY(-2px); }
+        .nav-link { position: relative; color: #000; font-weight: 600; }
+        .nav-link::after { content: ''; position: absolute; bottom: -2px; left: 0; width: 0; height: 2px; background-color: #E30613; transition: width 0.3s ease; }
+        .nav-link:hover::after, .nav-link.active::after { width: 100%; }
+        .mobile-menu { max-height: 0; overflow: hidden; transition: max-height 0.5s ease-out; }
+        .mobile-menu.open { max-height: 1000px; }
+
+        /* Timeline Styles */
+        .timeline-container { position: relative; padding: 20px 0; }
+        .timeline-line { position: absolute; left: 50%; top: 0; bottom: 0; width: 4px; background: #E3EDF4; transform: translateX(-50%); border-radius: 2px; }
+        .timeline-item { position: relative; margin-bottom: 50px; width: 50%; padding: 0 40px; }
+        .timeline-item.left { left: 0; text-align: right; }
+        .timeline-item.right { left: 50%; }
+        .timeline-dot { position: absolute; top: 24px; width: 20px; height: 20px; background: white; border: 4px solid #009FE3; border-radius: 50%; z-index: 10; transition: all 0.3s ease; }
+        .timeline-item.left .timeline-dot { right: -10px; }
+        .timeline-item.right .timeline-dot { left: -10px; }
+        .timeline-card { background: white; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: transform 0.3s ease, box-shadow 0.3s ease; border-top: 4px solid transparent; cursor: pointer; }
+        .timeline-card:hover { transform: translateY(-5px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); border-top-color: #E30613; }
+
+        @media (max-width: 768px) {
+            .timeline-line { left: 20px; }
+            .timeline-item { width: 100%; padding-left: 60px; padding-right: 10px; text-align: left; left: 0 !important; }
+            .timeline-dot { left: 10px !important; right: auto !important; }
+        }
+        .page-header { background: linear-gradient(135deg, #00609C 0%, #009FE3 100%); }
+
+        /* Modal Styles */
+        .modal-backdrop { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(4px); display: flex; justify-content: center; align-items: center; z-index: 100; opacity: 0; visibility: hidden; transition: opacity 0.3s ease; }
+        .modal-backdrop.active { opacity: 1; visibility: visible; }
+        .modal-content { background: white; max-width: 600px; width: 90%; max-height: 90vh; overflow-y: auto; border-radius: 12px; transform: scale(0.9); transition: transform 0.3s ease; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); position: relative; }
+        .modal-backdrop.active .modal-content { transform: scale(1); }
+        .modal-close-btn { position: absolute; top: 1rem; right: 1rem; background: #f3f4f6; border: none; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; z-index: 10; }
+
+        /* Admin Specific Styles */
+        .admin-controls { position: absolute; top: 10px; right: 10px; z-index: 20; display: none; gap: 0.5rem; }
+        .admin-mode .admin-controls { display: flex; }
+        .admin-mode .timeline-card { border: 2px dashed #009FE3; }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-20">
+            <a href="index.html" class="flex items-center gap-3">
+                <img src="https://www.hoganas.se/images/18.5b0e2a2a176843ef8f54be90/1611176929596/Hoganas-logo-h.svg" class="h-10 w-auto rounded">
+                <span class="font-display text-xl md:text-2xl text-brand-black tracking-tight">IT/MEDIA <span class="text-brand-blue">Höganäs</span></span>
+            </a>
+            
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="index.html" class="nav-link text-sm uppercase tracking-wider">Start</a>
+                <a href="media.html" class="nav-link text-sm uppercase tracking-wider">Bild & Film</a>
+                <a href="projects.html" class="nav-link active text-sm uppercase tracking-wider">Projekt</a>
+                <a href="about.html" class="nav-link text-sm uppercase tracking-wider">Om Oss</a>
+                <a href="index.html#kontakt" class="nav-link text-sm uppercase tracking-wider">Kontakt</a>
+                <button class="btn-primary px-6 py-2 rounded text-sm uppercase tracking-wider font-semibold">Mina Sidor</button>
+            </div>
+            <div class="md:hidden">
+                <button id="mobile-menu-btn" class="text-brand-black p-2 focus:outline-none"><i class="fa-solid fa-bars text-2xl"></i></button>
+            </div>
+        </div>
+        <div id="mobile-menu" class="mobile-menu md:hidden bg-surface-darkblue px-4 py-6 space-y-6">
+            <a href="index.html" class="block text-white text-lg font-semibold">Start</a>
+            <a href="media.html" class="block text-white text-lg font-semibold">Bild & Film</a>
+            <a href="projects.html" class="block text-brand-red text-lg font-semibold">Projekt</a>
+            <a href="about.html" class="block text-white text-lg font-semibold">Om Oss</a>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <header class="page-header py-16 md:py-20 relative overflow-hidden text-center">
+        <h1 class="font-display text-4xl sm:text-5xl md:text-6xl text-white leading-tight mb-4">Pågående Projekt</h1>
+        <p class="text-lg md:text-xl text-white/90 max-w-2xl mx-auto">Följ vårt arbete med att utveckla Höganäs digitala framtid.</p>
+    </header>
+
+    <!-- Timeline Section -->
+    <section class="py-20 bg-white">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center mb-12">
+                <div class="flex gap-4">
+                    <button data-filter="all" class="filter-btn bg-brand-blue text-white px-6 py-2 rounded-full text-sm font-semibold transition-all">Alla</button>
+                    <button data-filter="Pågående" class="filter-btn bg-gray-200 text-gray-700 px-6 py-2 rounded-full text-sm font-semibold transition-all">Pågående</button>
+                    <button data-filter="Avslutat" class="filter-btn bg-gray-200 text-gray-700 px-6 py-2 rounded-full text-sm font-semibold transition-all">Avslutade</button>
+                </div>
+                <button id="add-project-btn" onclick="openEditModal()" class="hidden bg-brand-blue text-white px-4 py-2 rounded text-sm font-semibold hover:bg-surface-darkblue transition">
+                    <i class="fa-solid fa-plus mr-2"></i> Nytt Projekt
+                </button>
+            </div>
+
+            <div class="timeline-container" id="timeline-container">
+                <div class="timeline-line hidden md:block"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- VIEW MODAL -->
+    <div id="project-modal" class="modal-backdrop">
+        <div class="modal-content">
+            <button class="modal-close-btn" onclick="closeModal('project-modal')"><i class="fa-solid fa-xmark text-gray-600"></i></button>
+            <div class="h-48 bg-surface-mist w-full rounded-t-lg flex items-center justify-center"><i class="fa-solid fa-laptop-code text-6xl text-brand-blue opacity-50"></i></div>
+            <div class="p-8">
+                <span id="modal-status" class="inline-block text-xs font-semibold px-3 py-1 rounded-full mb-3 uppercase tracking-wider">Status</span>
+                <h2 id="modal-title" class="font-display text-2xl md:text-3xl text-brand-black mb-4">Title</h2>
+                <div class="flex items-center gap-2 text-sm text-gray-500 mb-6"><i class="fa-regular fa-calendar"></i> <span id="modal-date">Datum</span></div>
+                <div class="prose text-gray-600 mb-6"><p id="modal-description">Description</p></div>
+                <div class="bg-surface-mist -mx-8 -mb-8 p-8 border-t border-gray-100 mt-6">
+                    <h3 class="font-semibold text-brand-black mb-2">Projektets omfattning</h3>
+                    <p id="modal-details" class="text-sm text-gray-600">Details...</p>
+                    <div class="mt-4">
+                        <div class="flex justify-between text-xs mb-1"><span class="font-medium">Framsteg</span><span id="modal-progress-text">50%</span></div>
+                        <div class="w-full bg-gray-200 rounded-full h-2"><div id="modal-progress-bar" class="bg-brand-blue h-2 rounded-full" style="width: 50%"></div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- EDIT MODAL -->
+    <div id="edit-modal" class="modal-backdrop">
+        <div class="modal-content">
+            <button class="modal-close-btn" onclick="closeModal('edit-modal')"><i class="fa-solid fa-xmark text-gray-600"></i></button>
+            <div class="p-8">
+                <h2 class="font-display text-2xl text-brand-black mb-6" id="edit-modal-title">Nytt Projekt</h2>
+                <form id="edit-form" class="space-y-4">
+                    <input type="hidden" id="edit-id">
+                    <div><label class="block text-sm font-medium text-gray-700 mb-1">Titel</label><input type="text" id="edit-title" class="w-full border border-gray-300 rounded px-4 py-2 focus:ring-2 focus:ring-brand-blue outline-none" required></div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div><label class="block text-sm font-medium text-gray-700 mb-1">Status</label><select id="edit-status" class="w-full border border-gray-300 rounded px-4 py-2"><option value="Pågående">Pågående</option><option value="Avslutat">Avslutat</option><option value="Planerat">Planerat</option></select></div>
+                        <div><label class="block text-sm font-medium text-gray-700 mb-1">Framsteg (%)</label><input type="number" id="edit-progress" class="w-full border border-gray-300 rounded px-4 py-2" min="0" max="100"></div>
+                    </div>
+                    <div><label class="block text-sm font-medium text-gray-700 mb-1">Datum text</label><input type="text" id="edit-date" class="w-full border border-gray-300 rounded px-4 py-2"></div>
+                    <div><label class="block text-sm font-medium text-gray-700 mb-1">Kort Beskrivning</label><textarea id="edit-description" rows="2" class="w-full border border-gray-300 rounded px-4 py-2"></textarea></div>
+                    <div><label class="block text-sm font-medium text-gray-700 mb-1">Detaljerad Information</label><textarea id="edit-details" rows="4" class="w-full border border-gray-300 rounded px-4 py-2"></textarea></div>
+                    <div class="pt-4 flex gap-4">
+                        <button type="button" onclick="closeModal('edit-modal')" class="w-1/2 py-2 border border-gray-300 rounded font-semibold hover:bg-gray-100 transition">Avbryt</button>
+                        <button type="submit" class="w-1/2 btn-primary py-2 rounded font-semibold">Spara</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- LOGIN MODAL -->
+    <div id="login-modal" class="modal-backdrop">
+        <div class="modal-content p-8 text-center" style="max-width: 400px;">
+            <div class="mb-6">
+                <div class="bg-brand-red w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-white"><i class="fa-solid fa-lock text-2xl"></i></div>
+                <h2 class="font-display text-2xl text-brand-black">Admin Inloggning</h2>
+            </div>
+            <form id="login-form" class="space-y-4">
+                <input type="password" id="login-password" placeholder="Lösenord" class="w-full border border-gray-300 rounded px-4 py-2 text-center" required>
+                <p id="login-error" class="text-brand-red text-sm hidden">Fel lösenord</p>
+                <button type="submit" class="w-full btn-primary py-2 rounded font-semibold">Logga in</button>
+                <button type="button" onclick="closeModal('login-modal')" class="w-full text-gray-500 text-sm mt-2">Avbryt</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ADMIN TOGGLE BUTTON -->
+    <button id="admin-toggle" onclick="toggleAdminMode()" class="fixed bottom-6 right-6 bg-brand-black text-white p-4 rounded-full shadow-lg hover:bg-gray-800 transition z-50"><i class="fa-solid fa-pen-to-square"></i></button>
+
+    <!-- Footer -->
+    <footer class="bg-brand-black text-white py-16">
+        <div class="max-w-7xl mx-auto px-4 text-center"><p class="text-xs text-gray-500">© 2024 IT/MEDIA Höganäs.</p></div>
+    </footer>
+    
+    <script>
+        // --- STATE ---
+        let projectsData = [];
+        let isAdminMode = false;
+        let authToken = localStorage.getItem('authToken'); 
+
+        // --- DOM REFS ---
+        const timelineContainer = document.getElementById('timeline-container');
+        const timelineLine = document.querySelector('.timeline-line');
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const addBtn = document.getElementById('add-project-btn');
+        const adminToggle = document.getElementById('admin-toggle');
+
+        // --- AUTH LOGIC ---
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const password = document.getElementById('login-password').value;
+            
+            const res = await fetch('/api/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ password })
+            });
+
+            const data = await res.json();
+            if(data.success) {
+                authToken = data.token;
+                localStorage.setItem('authToken', data.token); // FIXED typo
+                closeModal('login-modal');
+                enterAdminMode();
+            } else {
+                document.getElementById('login-error').classList.remove('hidden');
+            }
+        });
+
+        function toggleAdminMode() {
+            if (isAdminMode) {
+                isAdminMode = false;
+                authToken = null;
+                localStorage.removeItem('authToken');
+                document.body.classList.remove('admin-mode');
+                addBtn.classList.add('hidden');
+                adminToggle.classList.remove('bg-brand-red');
+                adminToggle.classList.add('bg-brand-black');
+            } else {
+                if(authToken) {
+                    enterAdminMode();
+                } else {
+                    document.getElementById('login-modal').classList.add('active');
+                }
+            }
+        }
+
+        function enterAdminMode() {
+            isAdminMode = true;
+            document.body.classList.add('admin-mode');
+            addBtn.classList.remove('hidden');
+            adminToggle.classList.add('bg-brand-red');
+            adminToggle.classList.remove('bg-brand-black');
+        }
+
+        async function authFetch(url, options = {}) {
+            options.headers = { ...options.headers, 'x-auth-token': authToken };
+            const res = await fetch(url, options);
+            if(res.status === 403) { alert('Session expired.'); toggleAdminMode(); }
+            return res;
+        }
+
+        // --- DATA LOGIC ---
+        async function loadProjects() {
+            const response = await fetch('/api/projects');
+            projectsData = await response.json();
+            renderProjects(projectsData);
+        }
+
+        function clearTimeline() {
+            timelineContainer.innerHTML = '';
+            timelineContainer.appendChild(timelineLine);
+        }
+
+        function renderProjects(projects) {
+            clearTimeline();
+            if (projects.length === 0) { timelineContainer.innerHTML = '<p class="text-center text-gray-500 py-12">Inga projekt.</p>'; return; }
+
+            projects.forEach((project, index) => {
+                const isLeft = index % 2 === 0;
+                let statusBg = 'bg-green-100 text-green-800';
+                if(project.status === 'Avslutat') statusBg = 'bg-gray-100 text-gray-600';
+                if(project.status === 'Planerat') statusBg = 'bg-blue-100 text-blue-800';
+
+                const html = `
+                    <div class="timeline-item ${isLeft ? 'left' : 'right'}">
+                        <div class="timeline-card p-6 relative" onclick="openViewModal(${project.id})">
+                            <div class="admin-controls" onclick="event.stopPropagation()">
+                                <button onclick="openEditModal(${project.id})" class="bg-white text-brand-black p-2 rounded-full shadow hover:bg-brand-blue hover:text-white transition text-sm"><i class="fa-solid fa-pen"></i></button>
+                                <button onclick="deleteProject(${project.id})" class="bg-white text-brand-red p-2 rounded-full shadow hover:bg-brand-red hover:text-white transition text-sm"><i class="fa-solid fa-trash"></i></button>
+                            </div>
+                            <span class="inline-block ${statusBg} text-xs font-semibold px-3 py-1 rounded-full mb-3 uppercase">${project.status}</span>
+                            <h3 class="font-display text-xl text-brand-black mb-2">${project.title}</h3>
+                            <p class="text-gray-600 text-sm mb-4">${project.description}</p>
+                            <div class="flex items-center ${isLeft ? 'justify-end' : ''} gap-2 text-xs text-gray-400"><i class="fa-regular fa-calendar"></i> ${project.date}</div>
+                        </div>
+                        <div class="timeline-dot"></div>
+                    </div>
+                `;
+                timelineContainer.insertAdjacentHTML('beforeend', html);
+            });
+        }
+
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const filterValue = btn.getAttribute('data-filter');
+                filterBtns.forEach(b => { b.classList.remove('bg-brand-blue', 'text-white'); b.classList.add('bg-gray-200', 'text-gray-700'); });
+                btn.classList.add('bg-brand-blue', 'text-white'); btn.classList.remove('bg-gray-200', 'text-gray-700');
+                const filtered = (filterValue === 'all') ? projectsData : projectsData.filter(p => p.status === filterValue);
+                renderProjects(filtered);
+            });
+        });
+
+        // --- MODALS ---
+        function openViewModal(id) {
+            const project = projectsData.find(p => p.id === id);
+            if (!project) return;
+            document.getElementById('modal-title').innerText = project.title;
+            document.getElementById('modal-description').innerText = project.details; 
+            document.getElementById('modal-date').innerText = project.date;
+            document.getElementById('modal-progress-text').innerText = project.progress + '%';
+            document.getElementById('modal-progress-bar').style.width = project.progress + '%';
+            const statusEl = document.getElementById('modal-status');
+            statusEl.innerText = project.status;
+            statusEl.className = 'inline-block text-xs font-semibold px-3 py-1 rounded-full mb-3 uppercase tracking-wider';
+            if(project.status === 'Pågående') statusEl.classList.add('bg-green-100', 'text-green-800');
+            else if(project.status === 'Avslutat') statusEl.classList.add('bg-gray-100', 'text-gray-600');
+            else statusEl.classList.add('bg-blue-100', 'text-blue-800');
+            document.getElementById('project-modal').classList.add('active');
+        }
+
+        function openEditModal(id = null) {
+            document.getElementById('edit-form').reset();
+            if (id) {
+                const project = projectsData.find(p => p.id === id);
+                document.getElementById('edit-modal-title').innerText = "Redigera";
+                document.getElementById('edit-id').value = id;
+                document.getElementById('edit-title').value = project.title;
+                document.getElementById('edit-status').value = project.status;
+                document.getElementById('edit-date').value = project.date;
+                document.getElementById('edit-progress').value = project.progress;
+                document.getElementById('edit-description').value = project.description;
+                document.getElementById('edit-details').value = project.details;
+            } else {
+                document.getElementById('edit-modal-title').innerText = "Nytt Projekt";
+                document.getElementById('edit-id').value = ''; 
+            }
+            document.getElementById('edit-modal').classList.add('active');
+        }
+
+        function closeModal(modalId) { 
+            document.getElementById(modalId).classList.remove('active'); 
+        }
+
+        document.getElementById('project-modal').addEventListener('click', (e) => { if(e.target.id === 'project-modal') closeModal('project-modal'); });
+        document.getElementById('edit-modal').addEventListener('click', (e) => { if(e.target.id === 'edit-modal') closeModal('edit-modal'); });
+
+        async function deleteProject(id) {
+            if(!confirm("Är du säker?")) return;
+            const res = await authFetch(`/api/projects/${id}`, { method: 'DELETE' });
+            if(res.ok) loadProjects();
+        }
+
+        document.getElementById('edit-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('edit-id').value;
+            const payload = {
+                title: document.getElementById('edit-title').value,
+                status: document.getElementById('edit-status').value,
+                date: document.getElementById('edit-date').value,
+                progress: parseInt(document.getElementById('edit-progress').value),
+                description: document.getElementById('edit-description').value,
+                details: document.getElementById('edit-details').value
+            };
+
+            let url = '/api/projects';
+            let method = 'POST';
+            if(id) { url = `/api/projects/${id}`; method = 'PUT'; }
+
+            const res = await authFetch(url, {
+                method: method,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if(res.ok) { closeModal('edit-modal'); loadProjects(); }
+            else alert("Kunde inte spara.");
+        });
+
+        // --- INIT ---
+        loadProjects();
+
+        document.getElementById('mobile-menu-btn').addEventListener('click', () => {
+            document.getElementById('mobile-menu').classList.toggle('open');
+        });
+    </script>
+</body>
+</html>

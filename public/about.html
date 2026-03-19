@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Om Oss - IT/MEDIA Höganäs</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Open Sans Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Open Sans', 'sans-serif'],
+                        display: ['"Century Gothic"', '"Apple Gothic"', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            black: '#000000',
+                            white: '#FFFFFF',
+                            red: '#E30613',
+                            beige: '#B5A38F',
+                            blue: '#009FE3',
+                        },
+                        surface: {
+                            light: '#C7DEED',
+                            mist: '#E3EDF4',
+                            warm: '#F4F2EE',
+                            darkblue: '#00609C'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Open Sans', sans-serif; background-color: #FFFFFF; color: #000000; }
+        .font-display { font-family: "Century Gothic", "Apple Gothic", sans-serif; font-weight: 700; }
+        
+        .btn-primary {
+            background-color: #E30613;
+            color: white;
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover { background-color: #b91c1c; transform: translateY(-2px); }
+
+        .nav-link {
+            position: relative;
+            color: #000;
+            font-weight: 600;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: #E30613;
+            transition: width 0.3s ease;
+        }
+        .nav-link:hover::after { width: 100%; }
+        .nav-link.active::after { width: 100%; }
+
+        .mobile-menu {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-out;
+        }
+        .mobile-menu.open { max-height: 1000px; }
+        
+        .page-header {
+            background: linear-gradient(to right, #009FE3, #C7DEED);
+        }
+        
+        .team-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <div class="flex items-center">
+                    <a href="index.html" class="flex items-center gap-3">
+                        <img src="https://www.hoganas.se/images/18.5b0e2a2a176843ef8f54be90/1611176929596/Hoganas-logo-h.svg" class="h-10 w-auto rounded">
+
+                        <span class="font-display text-xl md:text-2xl text-brand-black tracking-tight">IT/MEDIA <span class="text-brand-blue">Höganäs</span></span>
+                    </a>
+                </div>
+                
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="index.html" class="nav-link text-sm uppercase tracking-wider">Start</a>
+                    <a href="media.html" class="nav-link text-sm uppercase tracking-wider">Bild & Film</a>
+                    <a href="projects.html" class="nav-link text-sm uppercase tracking-wider">Projekt</a>
+                    <a href="about.html" class="nav-link active text-sm uppercase tracking-wider">Om Oss</a>
+                    <a href="index.html#kontakt" class="nav-link text-sm uppercase tracking-wider">Kontakt</a>
+                    <button class="btn-primary px-6 py-2 rounded text-sm uppercase tracking-wider font-semibold">
+                        Mina Sidor
+                    </button>
+                </div>
+
+                <div class="md:hidden">
+                    <button id="mobile-menu-btn" class="text-brand-black p-2 focus:outline-none">
+                        <i class="fa-solid fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="mobile-menu md:hidden bg-surface-darkblue">
+            <div class="px-4 py-6 space-y-6">
+                <a href="index.html" class="block text-white text-lg font-semibold hover:text-brand-red transition">Start</a>
+                <a href="media.html" class="block text-white text-lg font-semibold hover:text-brand-red transition">Bild & Film</a>
+                <a href="projects.html" class="block text-white text-lg font-semibold hover:text-brand-red transition">Projekt</a>
+                <a href="about.html" class="block text-brand-red text-lg font-semibold transition">Om Oss</a>
+                <a href="index.html#kontakt" class="block text-white text-lg font-semibold hover:text-brand-red transition">Kontakt</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <header class="page-header py-16 md:py-24 relative overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+            <h1 class="font-display text-4xl sm:text-5xl md:text-6xl text-white leading-tight mb-4">
+                Om Oss
+            </h1>
+            <p class="text-lg md:text-xl text-white/90 max-w-2xl mx-auto">
+                Vår vision är att skapa en av Sveriges mest digitalt inkluderande kommuner.
+            </p>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="py-16 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+            <!-- Mission Section -->
+            <div class="grid md:grid-cols-2 gap-12 items-center mb-20">
+                <div>
+                    <h2 class="font-display text-3xl md:text-4xl text-brand-black mb-6">Vårt Uppdrag</h2>
+                    <p class="text-gray-700 leading-relaxed mb-4">
+                        IT/Media-avdelningen i Höganäs kommun arbetar för att säkerställa att alla invånare har tillgång till moderna, säkra och effektiva digitala tjänster. Vi är motorn som driver kommunens digitala transformation.
+                    </p>
+                    <p class="text-gray-700 leading-relaxed">
+                        Genom att förena teknisk expertis med kreativ kommunikation stöttar vi både interna verksamheter och medborgare i den digitala vardagen.
+                    </p>
+                </div>
+                <div class="bg-surface-warm p-8 rounded-xl border-l-4 border-brand-blue shadow-sm">
+                    <h3 class="font-display text-xl text-brand-blue mb-4">Våra Kärnvärden</h3>
+                    <ul class="space-y-3">
+                        <li class="flex items-center gap-3">
+                            <i class="fa-solid fa-check-circle text-brand-red"></i>
+                            <span class="font-medium">Tillgänglighet för alla</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <i class="fa-solid fa-check-circle text-brand-red"></i>
+                            <span class="font-medium">Säkerhet i fokus</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <i class="fa-solid fa-check-circle text-brand-red"></i>
+                            <span class="font-medium">Innovation & Nyfikenhet</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <i class="fa-solid fa-check-circle text-brand-red"></i>
+                            <span class="font-medium">Öppen kommunikation</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Team Section -->
+            <div class="text-center mb-12">
+                <h2 class="font-display text-3xl md:text-4xl text-brand-black mb-4">Vårt Team</h2>
+                <div class="w-16 h-1 bg-brand-red mx-auto mb-6"></div>
+                <p class="text-gray-600 max-w-xl mx-auto">Vi är ett dedikerat team av IT-specialister, kreatörer och supportmedarbetare.</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8 mb-20">
+                <!-- Team Card 1 -->
+                <div class="team-card bg-white rounded-lg shadow-md overflow-hidden transition duration-300 border border-gray-100">
+                    <img src="https://picsum.photos/seed/team-it-1/400/300.jpg" class="w-full h-48 object-cover" alt="IT Chef">
+                    <div class="p-6">
+                        <h3 class="font-display text-lg text-brand-black">Anders Svensson</h3>
+                        <p class="text-sm text-brand-blue font-semibold uppercase tracking-wider mb-3">IT-Chef</p>
+                        <p class="text-gray-600 text-sm">Strategiskt ansvarig för kommunens IT-infrastruktur och digitalisering.</p>
+                    </div>
+                </div>
+
+                <!-- Team Card 2 -->
+                <div class="team-card bg-white rounded-lg shadow-md overflow-hidden transition duration-300 border border-gray-100">
+                    <img src="https://picsum.photos/seed/team-media-2/400/300.jpg" class="w-full h-48 object-cover" alt="Mediasamordnare">
+                    <div class="p-6">
+                        <h3 class="font-display text-lg text-brand-black">Maria Lindgren</h3>
+                        <p class="text-sm text-brand-blue font-semibold uppercase tracking-wider mb-3">Mediasamordnare</p>
+                        <p class="text-gray-600 text-sm">Ansvarig för extern kommunikation, webb och sociala medier.</p>
+                    </div>
+                </div>
+
+                <!-- Team Card 3 -->
+                <div class="team-card bg-white rounded-lg shadow-md overflow-hidden transition duration-300 border border-gray-100">
+                    <img src="https://picsum.photos/seed/team-support-3/400/300.jpg" class="w-full h-48 object-cover" alt="Support Lead">
+                    <div class="p-6">
+                        <h3 class="font-display text-lg text-brand-black">Jonas Pettersson</h3>
+                        <p class="text-sm text-brand-blue font-semibold uppercase tracking-wider mb-3">Supportansvarig</p>
+                        <p class="text-gray-600 text-sm">Leder supportteamet som hjälper invånare och personal med tekniska frågor.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CTA Section -->
+            <div class="bg-surface-mist rounded-xl p-8 md:p-12 text-center border border-surface-light">
+                <h2 class="font-display text-2xl md:text-3xl text-brand-black mb-4">Vill du veta mer?</h2>
+                <p class="text-gray-600 mb-8 max-w-2xl mx-auto">Vi berättar gärna mer om våra pågående projekt och hur vi arbetar för framtiden.</p>
+                <a href="index.html#kontakt" class="btn-primary px-8 py-3 rounded-full font-semibold inline-flex items-center justify-center gap-2">
+                    Kontakta Oss <i class="fa-solid fa-envelope"></i>
+                </a>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-brand-black text-white py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 mb-12 text-center sm:text-left">
+                <div>
+                    <h3 class="font-display text-xl mb-4">IT/MEDIA Höganäs</h3>
+                    <p class="text-gray-400 text-sm">Kommunhuset<br>Storgatan 1<br>263 83 Höganäs</p>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4 text-sm uppercase">Digitalt</h4>
+                    <ul class="space-y-2 text-gray-400 text-sm">
+                        <li><a href="#" class="hover:text-brand-red transition">E-tjänster</a></li>
+                        <li><a href="#" class="hover:text-brand-red transition">Support</a></li>
+                        <li><a href="#" class="hover:text-brand-red transition">Säkerhet</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4 text-sm uppercase">Information</h4>
+                    <ul class="space-y-2 text-gray-400 text-sm">
+                        <li><a href="about.html" class="hover:text-brand-red transition">Om Oss</a></li>
+                        <li><a href="#" class="hover:text-brand-red transition">Tillgänglighet</a></li>
+                        <li><a href="#" class="hover:text-brand-red transition">Cookies</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4 text-sm uppercase">Följ oss</h4>
+                    <div class="flex gap-4 justify-center sm:justify-start">
+                        <a href="#" class="text-white hover:text-brand-red transition text-xl">
+                            <i class="fa-brands fa-twitter"></i>
+                        </a>
+                        <a href="#" class="text-white hover:text-brand-red transition text-xl">
+                            <i class="fa-brands fa-facebook"></i>
+                        </a>
+                        <a href="#" class="text-white hover:text-brand-red transition text-xl">
+                            <i class="fa-brands fa-instagram"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center text-center md:text-left">
+                <p class="text-xs text-gray-500">© 2024 IT/MEDIA Höganäs. Alla rättigheter förbehållna.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const menuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const icon = menuBtn.querySelector('i');
+
+        menuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('open');
+            icon.classList.toggle('fa-bars');
+            icon.classList.toggle('fa-times');
+        });
+    </script>
+</body>
+</html>

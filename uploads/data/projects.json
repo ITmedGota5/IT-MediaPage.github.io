@@ -1,0 +1,47 @@
+[
+  {
+    "id": 1,
+    "status": "Pågående",
+    "title": "Ny Webbkarta",
+    "description": "Vi bygger en helt ny interaktiv karta för kommunen.",
+    "date": "Start: Januari 2024",
+    "details": "Detta projekt innefattar migrering från gamla GIS-system.",
+    "progress": 40
+  },
+  {
+    "id": 2,
+    "status": "Pågående",
+    "title": "Fiberutbyggnad Etapp 3",
+    "description": "Utbyggnad av fibernätet till landsbygden.",
+    "date": "Start: November 2023",
+    "details": "Arbetet omfattar cirka 15 km grävning.",
+    "progress": 65
+  },
+  {
+    "id": 3,
+    "status": "Avslutat",
+    "title": "Upphandling Skol-IT",
+    "description": "Nytt avtal för leverans av datorer och surfplattor.",
+    "date": "Avslutat: December 2023",
+    "details": "Totalt levererades 1200 enheter.",
+    "progress": 100
+  },
+  {
+    "id": 4,
+    "status": "Pågående",
+    "title": "Medborgarplattform",
+    "description": "Utveckling av en ny plattform för digital dialog.",
+    "date": "Start: Mars 2024",
+    "details": "Plattformen kommer erbjuda e-tjänster.",
+    "progress": 20
+  },
+  {
+    "id": 5,
+    "status": "Planerat",
+    "title": "Säkerhetsuppdatering Intranät",
+    "description": "Kommande uppgradering av det interna nätverket.",
+    "date": "Start: September 2024",
+    "details": "Planerat underhåll.",
+    "progress": 0
+  }
+]

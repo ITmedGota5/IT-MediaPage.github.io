@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bild & Film - Höganäs Kommun</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Open Sans Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Open Sans', 'sans-serif'],
+                        display: ['"Century Gothic"', '"Apple Gothic"', 'sans-serif'],
+                    },
+                    colors: {
+                         brand: {
+                            black: '#000000',
+                            white: '#FFFFFF',
+                            red: '#E30613',
+                            beige: '#B5A38F',
+                            blue: '#009FE3',
+                        },
+                        surface: {
+                            light: '#C7DEED',
+                            mist: '#E3EDF4',
+                            mint: '#F4F2EE',
+                            darkblue: '#00609C'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background-color: #FFFFFF;
+            color: #000000;
+        }
+
+        .font-display {
+            font-family: "Century Gothic", "Apple Gothic", sans-serif;
+            font-weight: 700;
+        }
+
+        .btn-primary {
+            background-color: rgb(227, 6, 19);
+            color: white;
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            background-color: rgb(200, 0, 10);
+            transform: translateY(-2px);
+        }
+
+        .nav-link {
+            position: relative;
+            color: #000;
+            font-weight: 600;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: rgb(227, 6, 19);
+            transition: width 0.3s ease;
+        }
+        .nav-link:hover::after, .nav-link.active::after {
+            width: 100%;
+        }
+
+        .mobile-menu {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-out;
+        }
+        .mobile-menu.open {
+            max-height: 1000px; 
+        }
+
+        .media-card {
+            position: relative;
+            overflow: hidden;
+            border-radius: 0.5rem;
+            cursor: zoom-in; /* Indicates clickable */
+        }
+        .media-card img {
+            transition: transform 0.5s ease;
+        }
+        .media-card:hover img {
+            transform: scale(1.05);
+        }
+        .media-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 60%);
+            transition: background 0.3s ease;
+            pointer-events: none; /* Let clicks pass through to image */
+        }
+        .media-card:hover .media-overlay {
+            background: linear-gradient(to top, rgba(0,96,156,0.9) 0%, rgba(0,96,156,0.4) 100%);
+        }
+        
+        .page-header {
+            background: linear-gradient(to right, rgb(0, 96, 156), rgb(199, 222, 237));
+        }
+
+        /* Admin Edit Overlay */
+        .admin-controls {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            z-index: 20;
+            display: none;
+            gap: 0.5rem;
+            pointer-events: auto; /* Ensure buttons are clickable */
+        }
+        .admin-mode .admin-controls {
+            display: flex;
+        }
+        .admin-mode .media-card {
+            border: 2px dashed #009FE3;
+            cursor: default; /* Reset cursor in admin mode */
+        }
+        
+        /* Login Modal CSS */
+        #login-modal {
+            display: none; 
+            position: fixed;
+            inset: 0;
+            z-index: 9999; 
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(4px);
+            justify-content: center;
+            align-items: center;
+        }
+        #login-modal.active {
+            display: flex;
+        }
+
+        /* View Modal (Lightbox) CSS */
+        #view-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 500; /* High z-index */
+            background: rgba(0, 0, 0, 0.9);
+            justify-content: center;
+            align-items: center;
+            cursor: zoom-out;
+        }
+        #view-modal.active {
+            display: flex;
+        }
+        #view-modal img {
+            max-width: 90vw;
+            max-height: 90vh;
+            object-fit: contain;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        }
+
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <div class="flex items-center">
+                    <a href="index.html" class="flex items-center gap-3">
+                        <img src="https://www.hoganas.se/images/18.5b0e2a2a176843ef8f54be90/1611176929596/Hoganas-logo-h.svg" class="h-10 w-auto rounded">
+                        <span class="font-display text-xl md:text-2xl text-brand-black tracking-tight">IT/MEDIA <span class="text-brand-blue">Höganäs</span></span>
+                    </a>
+                </div>
+                
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="index.html" class="nav-link text-sm uppercase tracking-wider">Start</a>
+                    <a href="media.html" class="nav-link active text-sm uppercase tracking-wider">Bild & Film</a>
+                    <a href="projects.html" class="nav-link text-sm uppercase tracking-wider">Projekt</a>
+                    <a href="about.html" class="nav-link text-sm uppercase tracking-wider">Om Oss</a>
+                    <a href="index.html#kontakt" class="nav-link text-sm uppercase tracking-wider">Kontakt</a>
+                    <button class="btn-primary px-6 py-2 rounded text-sm uppercase tracking-wider font-semibold">
+                        Mina Sidor
+                    </button>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <div class="md:hidden">
+                    <button id="mobile-menu-btn" class="text-brand-black p-2 focus:outline-none">
+                        <i class="fa-solid fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Container -->
+        <div id="mobile-menu" class="mobile-menu md:hidden bg-brand-blue">
+            <div class="px-4 py-6 space-y-6">
+                <a href="index.html" class="block text-white text-lg font-semibold hover:text-brand-red transition">Start</a>
+                <a href="media.html" class="block text-brand-red text-lg font-semibold transition">Bild & Film</a>
+                <a href="projects.html" class="block text-white text-lg font-semibold hover:text-brand-red transition">Projekt</a>
+                <a href="about.html" class="block text-brand-white text-lg font-semibold transition">Om Oss</a>
+                <a href="index.html#kontakt" class="block text-white text-lg font-semibold hover:text-brand-red transition">Kontakt</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <header class="page-header py-16 md:py-24 relative overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+            <h1 class="font-display text-4xl sm:text-5xl md:text-6xl text-white leading-tight mb-4">Bild & Film</h1>
+            <p class="text-lg md:text-xl text-white/90 max-w-2xl mx-auto">Upptäck Höganäs kommun genom våra fotografier och filmer.</p>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="py-16 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <!-- Featured Video -->
+            <div class="mb-16">
+                <h2 class="font-display text-2xl md:text-3xl text-brand-black mb-6 text-center">Senaste Filmen</h2>
+                <div class="relative rounded-xl overflow-hidden shadow-2xl aspect-video bg-gray-900 cursor-pointer group">
+                    <img src="https://picsum.photos/seed/hoganas-video/1200/675.jpg" alt="Play Video" class="w-full h-full object-cover group-hover:opacity-50 transition-opacity duration-300">
+                    <div class="absolute inset-0 flex items-center justify-center z-10">
+                        <div class="bg-brand-red w-20 h-20 md:w-24 md:h-24 rounded-full flex items-center justify-center shadow-lg border-4 border-white/20">
+                            <i class="fa-solid fa-play text-white text-3xl md:text-4xl ml-1"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gallery Header -->
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="font-display text-2xl md:text-3xl text-brand-black">Bildgalleri</h2>
+                <button id="add-new-btn" onclick="openModal()" class="hidden bg-surface-darkblue text-white px-4 py-2 rounded text-sm font-semibold hover:bg-brand-blue transition">
+                    <i class="fa-solid fa-plus mr-2"></i> Lägg till bild
+                </button>
+            </div>
+
+            <!-- Grid -->
+            <div id="media-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-brand-black text-white py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+             <p class="text-gray-400 text-sm">© 2024 IT/MEDIA Höganäs. Alla rättigheter förbehållna.</p>
+        </div>
+    </footer>
+
+    <!-- VIEW MODAL (Lightbox) -->
+    <div id="view-modal" onclick="closeModal('view-modal')">
+        <img id="view-modal-img" src="" alt="Large View">
+    </div>
+
+    <!-- ADMIN EDIT MODAL -->
+    <div id="edit-modal" class="fixed inset-0 z-[100] hidden">
+        <div class="absolute inset-0 bg-black/70" onclick="closeModal('edit-modal')"></div>
+        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-xl shadow-2xl w-full max-w-lg p-8 z-10">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="font-display text-2xl text-brand-black">Redigera Bild</h3>
+                <button onclick="closeModal('edit-modal')" class="text-gray-400 hover:text-brand-red text-2xl">&times;</button>
+            </div>
+            <form id="edit-form" class="space-y-4">
+                <input type="hidden" id="edit-id">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Kategori</label>
+                    <input type="text" id="edit-category" class="w-full border border-gray-300 rounded px-4 py-2 focus:ring-2 focus:ring-brand-blue outline-none" placeholder="T.ex. Natur">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Titel</label>
+                    <input type="text" id="edit-title" class="w-full border border-gray-300 rounded px-4 py-2 focus:ring-2 focus:ring-brand-blue outline-none" placeholder="T.ex. Solnedgång">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Bild</label>
+                    <input type="file" id="edit-file" accept="image/*" class="hidden" onchange="handleFileSelect(event)">
+                    <button type="button" onclick="document.getElementById('edit-file').click()" class="px-4 py-2 bg-gray-100 border border-gray-300 rounded text-sm hover:bg-gray-200 transition w-full text-left">
+                        <i class="fa-solid fa-upload mr-2"></i> <span id="file-label">Välj ny bild...</span>
+                    </button>
+                </div>
+                <div class="pt-4 flex gap-4">
+                    <button type="button" onclick="closeModal('edit-modal')" class="w-1/2 py-2 border border-gray-300 rounded font-semibold hover:bg-gray-100 transition">Avbryt</button>
+                    <button type="submit" class="w-1/2 btn-primary py-2 rounded font-semibold">Spara</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- LOGIN MODAL -->
+    <div id="login-modal">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-sm p-8 text-center relative">
+            <div class="mb-6">
+                <div class="bg-brand-red w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-white">
+                    <i class="fa-solid fa-lock text-2xl"></i>
+                </div>
+                <h2 class="font-display text-2xl text-brand-black">Admin Inloggning</h2>
+                <p class="text-gray-500 text-sm mt-2">Ange lösenordet för att redigera.</p>
+            </div>
+            
+            <form id="login-form" class="space-y-4">
+                <input type="password" id="login-password" placeholder="Lösenord" class="w-full border border-gray-300 rounded px-4 py-2 text-center focus:ring-2 focus:ring-brand-blue outline-none" required>
+                <p id="login-error" class="text-brand-red text-sm hidden">Fel lösenord, försök igen.</p>
+                <button type="submit" class="w-full btn-primary py-2 rounded font-semibold">Logga in</button>
+                <button type="button" onclick="closeModal('login-modal')" class="w-full text-gray-500 text-sm hover:text-brand-black mt-2">Avbryt</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ADMIN TOGGLE BUTTON -->
+    <button id="admin-toggle" onclick="toggleAdminMode()" class="fixed bottom-6 right-6 bg-brand-black text-white p-4 rounded-full shadow-lg hover:bg-gray-800 transition z-50" title="Växla Admin-läge">
+        <i class="fa-solid fa-pen-to-square"></i>
+    </button>
+
+    <script>
+        // --- STATE ---
+        let mediaData = [];
+        let isAdminMode = false;
+        let authToken = localStorage.getItem('authToken');
+
+        // --- AUTH HELPER ---
+        async function authFetch(url, options = {}) {
+            options.headers = {
+                ...options.headers,
+                'x-auth-token': authToken
+            };
+            return fetch(url, options);
+        }
+
+        // --- LOGIN LOGIC ---
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const password = document.getElementById('login-password').value;
+            
+            const res = await fetch('/api/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ password })
+            });
+
+            const data = await res.json();
+            if(data.success) {
+                authToken = data.token;
+                localStorage.setItem('authToken', data.token);
+                closeModal('login-modal');
+                toggleAdminMode(true); 
+            } else {
+                document.getElementById('login-error').classList.remove('hidden');
+            }
+        });
+
+        function toggleAdminMode(forceState = null) {
+            const shouldBeAdmin = forceState !== null ? forceState : !isAdminMode;
+            
+            if(shouldBeAdmin && !authToken) {
+                document.getElementById('login-modal').classList.add('active');
+                return;
+            }
+
+            isAdminMode = shouldBeAdmin;
+            const body = document.body;
+            const btn = document.getElementById('admin-toggle');
+            
+            if(isAdminMode) {
+                body.classList.add('admin-mode');
+                btn.classList.add('bg-brand-red');
+                btn.classList.remove('bg-brand-black');
+            } else {
+                // Logging out
+                authToken = null;
+                localStorage.removeItem('authToken');
+                body.classList.remove('admin-mode');
+                btn.classList.remove('bg-brand-red');
+                btn.classList.add('bg-brand-black');
+            }
+            renderGallery();
+        }
+
+        // --- DATA LOADING ---
+        async function loadMedia() {
+            try {
+                const response = await fetch('/api/media');
+                mediaData = await response.json();
+                renderGallery();
+            } catch (error) { console.error(error); }
+        }
+
+        // --- RENDER ---
+        function renderGallery() {
+            const grid = document.getElementById('media-grid');
+            grid.innerHTML = '';
+
+            mediaData.forEach(item => {
+                const card = document.createElement('div');
+                // Added cursor-zoom-in class
+                card.className = `media-card h-80 md:h-96 shadow-lg ${isAdminMode ? 'admin-mode' : ''}`;
+                
+                card.innerHTML = `
+                    <!-- Added onclick to open view modal -->
+                    <img src="${item.src}" onclick="openViewModal('${item.src}')" class="w-full h-full object-cover" alt="${item.title}">
+                    <div class="media-overlay"></div>
+                    
+                    <div class="admin-controls" onclick="event.stopPropagation()">
+                        <button onclick="openModal(${item.id})" class="bg-white text-brand-black p-2 rounded-full shadow hover:bg-brand-blue hover:text-white transition text-sm">
+                            <i class="fa-solid fa-pen"></i>
+                        </button>
+                        <button onclick="deleteItem(${item.id})" class="bg-white text-brand-red p-2 rounded-full shadow hover:bg-brand-red hover:text-white transition text-sm">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </div>
+
+                    <!-- Info Overlay -->
+                    <div class="absolute bottom-0 left-0 right-0 p-6 z-10">
+                        <span class="text-brand-red font-semibold text-xs uppercase tracking-widest">${item.category}</span>
+                        <h3 class="font-display text-xl text-white mt-1">${item.title}</h3>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+
+            document.getElementById('add-new-btn').classList.toggle('hidden', !isAdminMode);
+        }
+
+        // --- MODAL LOGIC ---
+        
+        // New View Modal Function
+        function openViewModal(src) {
+            // Prevent opening view modal if we are clicking inside admin controls
+            if(isAdminMode && event.target.closest('.admin-controls')) return;
+            
+            document.getElementById('view-modal-img').src = src;
+            document.getElementById('view-modal').classList.add('active');
+        }
+
+        function openModal(id = null) {
+            document.getElementById('edit-modal').classList.remove('hidden');
+            if (id) {
+                const item = mediaData.find(i => i.id === id);
+                document.getElementById('edit-id').value = id;
+                document.getElementById('edit-category').value = item.category;
+                document.getElementById('edit-title').value = item.title;
+            } else {
+                document.getElementById('edit-form').reset();
+                document.getElementById('edit-id').value = '';
+            }
+        }
+
+        function closeModal(modalId) {
+            if(modalId === 'login-modal') {
+                document.getElementById('login-modal').classList.remove('active');
+                document.getElementById('login-password').value = ''; 
+            } else if (modalId === 'view-modal') {
+                document.getElementById('view-modal').classList.remove('active');
+            } else {
+                document.getElementById('edit-modal').classList.add('hidden');
+            }
+        }
+        
+        function handleFileSelect(e) {
+            if(e.target.files[0]) document.getElementById('file-label').innerText = e.target.files[0].name;
+        }
+
+        // --- API ACTIONS ---
+        document.getElementById('edit-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const id = document.getElementById('edit-id').value;
+            const formData = new FormData();
+            formData.append('category', document.getElementById('edit-category').value);
+            formData.append('title', document.getElementById('edit-title').value);
+            const fileInput = document.getElementById('edit-file');
+            if (fileInput.files[0]) formData.append('image', fileInput.files[0]);
+
+            let url = '/api/media';
+            let method = 'POST';
+            if (id) { url = `/api/media/${id}`; method = 'PUT'; }
+
+            const response = await authFetch(url, { method: method, body: formData });
+            if(response.ok) { await loadMedia(); closeModal('edit-modal'); }
+            else alert('Kunde inte spara (Ej behörig?).');
+        });
+
+        async function deleteItem(id) {
+            if(confirm('Är du säker?')) {
+                const res = await authFetch(`/api/media/${id}`, { method: 'DELETE' });
+                if(res.ok) await loadMedia();
+                else alert('Kunde inte radera (Ej behörig?).');
+            }
+        }
+
+        // --- INIT ---
+        loadMedia();
+
+        // Mobile Menu
+        document.getElementById('mobile-menu-btn').addEventListener('click', () => {
+            document.getElementById('mobile-menu').classList.toggle('open');
+        });
+    </script>
+</body>
+</html>

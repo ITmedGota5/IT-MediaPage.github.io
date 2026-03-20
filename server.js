@@ -83,7 +83,7 @@ app.get('/api/media', async (req, res) => {
     res.json(data);
 });
 
-/*app.post('/api/media', checkAuth, upload.single('image'), async (req, res) => {
+app.post('/api/media', checkAuth, upload.single('image'), async (req, res) => {
     if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
 
     const file = req.file;
@@ -122,7 +122,7 @@ app.get('/api/media', async (req, res) => {
     }
     
     res.status(201).json(data[0]);
-});*/
+});
 
 app.put('/api/media/:id', checkAuth, async (req, res) => {
     const id = req.params.id;

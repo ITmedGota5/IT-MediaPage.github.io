@@ -411,8 +411,12 @@
                 
                 card.innerHTML = `
                     <!-- Added onclick to open view modal -->
-                    <img src="${item.src}" onclick="openViewModal('${item.src}')" class="w-full h-full object-cover" alt="${item.title}">
+                    <img src="${item.src}" onclick="openViewModal(event, '${item.src}')" class="w-full h-full object-cover" alt="${item.title}">
                     <div class="media-overlay"></div>
+                    
+                    <div class="admin-controls" onclick="event.stopPropagation()">
+                        <!-- ... buttons ... -->
+                    </div>
                     
                     <div class="admin-controls" onclick="event.stopPropagation()">
                         <button onclick="openModal(${item.id})" class="bg-white text-brand-black p-2 rounded-full shadow hover:bg-brand-blue hover:text-white transition text-sm">
@@ -438,9 +442,9 @@
         // --- MODAL LOGIC ---
         
         // New View Modal Function
-        function openViewModal(src) {
+                function openViewModal(e, src) {
             // Prevent opening view modal if we are clicking inside admin controls
-            if(isAdminMode && event.target.closest('.admin-controls')) return;
+            if(isAdminMode && e.target.closest('.admin-controls')) return;
             
             document.getElementById('view-modal-img').src = src;
             document.getElementById('view-modal').classList.add('active');

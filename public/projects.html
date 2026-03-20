@@ -360,14 +360,18 @@
             if(res.ok) loadProjects();
         }
 
-        document.getElementById('edit-form').addEventListener('submit', async (e) => {
+                document.getElementById('edit-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const id = document.getElementById('edit-id').value;
+            
+            // FIX: Handle empty progress input safely
+            const progressVal = parseInt(document.getElementById('edit-progress').value);
+            
             const payload = {
                 title: document.getElementById('edit-title').value,
                 status: document.getElementById('edit-status').value,
                 date: document.getElementById('edit-date').value,
-                progress: parseInt(document.getElementById('edit-progress').value),
+                progress: isNaN(progressVal) ? 0 : progressVal, // Default to 0 if empty/invalid
                 description: document.getElementById('edit-description').value,
                 details: document.getElementById('edit-details').value
             };

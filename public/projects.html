@@ -360,12 +360,13 @@
             if(res.ok) loadProjects();
         }
 
-                document.getElementById('edit-form').addEventListener('submit', async (e) => {
+                    document.getElementById('edit-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const id = document.getElementById('edit-id').value;
             
             // FIX: Handle empty progress input safely
-            const progressVal = parseInt(document.getElementById('edit-progress').value);
+            const progressInput = document.getElementById('edit-progress').value;
+            const progressVal = parseInt(progressInput);
             
             const payload = {
                 title: document.getElementById('edit-title').value,

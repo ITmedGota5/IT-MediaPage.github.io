@@ -326,7 +326,7 @@
         <i class="fa-solid fa-pen-to-square"></i>
     </button>
 
-    <script>
+        <script>
         // --- STATE ---
         let mediaData = [];
         let isAdminMode = false;
@@ -366,9 +366,16 @@
         function toggleAdminMode(forceState = null) {
             const shouldBeAdmin = forceState !== null ? forceState : !isAdminMode;
             
+            // If we want to be admin but have no token, show login
             if(shouldBeAdmin && !authToken) {
                 document.getElementById('login-modal').classList.add('active');
                 return;
+            }
+
+            // If we are forcing log out
+            if (!shouldBeAdmin) {
+                authToken = null;
+                localStorage.removeItem('authToken');
             }
 
             isAdminMode = shouldBeAdmin;
@@ -380,9 +387,6 @@
                 btn.classList.add('bg-brand-red');
                 btn.classList.remove('bg-brand-black');
             } else {
-                // Logging out
-                authToken = null;
-                localStorage.removeItem('authToken');
                 body.classList.remove('admin-mode');
                 btn.classList.remove('bg-brand-red');
                 btn.classList.add('bg-brand-black');
@@ -406,17 +410,11 @@
 
             mediaData.forEach(item => {
                 const card = document.createElement('div');
-                // Added cursor-zoom-in class
                 card.className = `media-card h-80 md:h-96 shadow-lg ${isAdminMode ? 'admin-mode' : ''}`;
                 
                 card.innerHTML = `
-                    <!-- Added onclick to open view modal -->
                     <img src="${item.src}" onclick="openViewModal(event, '${item.src}')" class="w-full h-full object-cover" alt="${item.title}">
                     <div class="media-overlay"></div>
-                    
-                    <div class="admin-controls" onclick="event.stopPropagation()">
-                        <!-- ... buttons ... -->
-                    </div>
                     
                     <div class="admin-controls" onclick="event.stopPropagation()">
                         <button onclick="openModal(${item.id})" class="bg-white text-brand-black p-2 rounded-full shadow hover:bg-brand-blue hover:text-white transition text-sm">
@@ -427,7 +425,6 @@
                         </button>
                     </div>
 
-                    <!-- Info Overlay -->
                     <div class="absolute bottom-0 left-0 right-0 p-6 z-10">
                         <span class="text-brand-red font-semibold text-xs uppercase tracking-widest">${item.category}</span>
                         <h3 class="font-display text-xl text-white mt-1">${item.title}</h3>
@@ -436,16 +433,14 @@
                 grid.appendChild(card);
             });
 
+            // This controls the "Add Image" button visibility
             document.getElementById('add-new-btn').classList.toggle('hidden', !isAdminMode);
         }
 
         // --- MODAL LOGIC ---
         
-        // New View Modal Function
-                function openViewModal(e, src) {
-            // Prevent opening view modal if we are clicking inside admin controls
+        function openViewModal(e, src) {
             if(isAdminMode && e.target.closest('.admin-controls')) return;
-            
             document.getElementById('view-modal-img').src = src;
             document.getElementById('view-modal').classList.add('active');
         }
@@ -457,9 +452,11 @@
                 document.getElementById('edit-id').value = id;
                 document.getElementById('edit-category').value = item.category;
                 document.getElementById('edit-title').value = item.title;
+                document.getElementById('file-label').innerText = 'Välj ny bild...';
             } else {
                 document.getElementById('edit-form').reset();
                 document.getElementById('edit-id').value = '';
+                document.getElementById('file-label').innerText = 'Välj ny bild...';
             }
         }
 
@@ -493,20 +490,29 @@
             if (id) { url = `/api/media/${id}`; method = 'PUT'; }
 
             const response = await authFetch(url, { method: method, body: formData });
-            if(response.ok) { await loadMedia(); closeModal('edit-modal'); }
-            else alert('Kunde inte spara (Ej behörig?).');
+            if(response.ok) { 
+                await loadMedia(); 
+                closeModal('edit-modal'); 
+            } else {
+                alert('Kunde inte spara.'); 
+            }
         });
 
         async function deleteItem(id) {
             if(confirm('Är du säker?')) {
                 const res = await authFetch(`/api/media/${id}`, { method: 'DELETE' });
                 if(res.ok) await loadMedia();
-                else alert('Kunde inte radera (Ej behörig?).');
+                else alert('Kunde inte radera.');
             }
         }
 
         // --- INIT ---
         loadMedia();
+        
+        // AUTO-LOGIN CHECK: If we have a token, verify it by trying to enter admin mode
+        if(authToken) {
+            toggleAdminMode(true);
+        }
 
         // Mobile Menu
         document.getElementById('mobile-menu-btn').addEventListener('click', () => {

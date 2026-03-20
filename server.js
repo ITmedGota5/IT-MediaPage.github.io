@@ -1,7 +1,7 @@
 const express = require('express');
 const multer = require('multer');
 const cors = require('cors');
-const path = require('path'); // <-- THIS WAS MISSING
+const path = require('path');
 require('dotenv').config();
 const { createClient } = require('@supabase/supabase-js');
 
@@ -10,11 +10,11 @@ const PORT = 3000;
 
 // --- SUPABASE SETUP ---
 const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_SERVICE_KEY; // Use Service Key for backend admin rights
+const supabaseKey = process.env.SUPABASE_SERVICE_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 // --- AUTH CONFIGURATION ---
-const ADMIN_PASSWORD = 'admin123'; 
+const ADMIN_PASSWORD = 'admin123';
 const validTokens = new Set();
 
 // Middleware
@@ -77,65 +77,108 @@ app.delete('/api/projects/:id', checkAuth, async (req, res) => {
 });
 
 // 2. MEDIA
+
+// GET all media
 app.get('/api/media', async (req, res) => {
     const { data, error } = await supabase.from('media').select('*').order('id', { ascending: false });
     if (error) return res.status(500).json({ error: error.message });
     res.json(data);
 });
 
+// POST new media (Upload Image + Data)
 app.post('/api/media', checkAuth, upload.single('image'), async (req, res) => {
-    if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
+    try {
+        if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
 
-    const file = req.file;
-    const fileExt = file.originalname.split('.').pop();
-    const fileName = `${Date.now()}.${fileExt}`;
-    const filePath = `public/${fileName}`; // Store in a 'public' folder inside the bucket
+        const file = req.file;
+        const fileExt = path.extname(file.originalname);
+        const fileName = `${Date.now()}${fileExt}`;
+        const filePath = `public/${fileName}`;
 
-    // 1. Upload to Supabase Storage
-    const { data: storageData, error: storageError } = await supabase.storage
-        .from('images') // Bucket name
-        .upload(filePath, file.buffer, {
-            contentType: file.mimetype,
-            upsert: false
-        });
+        // 1. Upload to Supabase Storage
+        const { data: storageData, error: storageError } = await supabase.storage
+            .from('images') // Ensure this bucket exists in Supabase
+            .upload(filePath, file.buffer, {
+                contentType: file.mimetype,
+                upsert: false
+            });
 
-    if (storageError) {
-        console.error(storageError);
-        return res.status(500).json({ error: 'Failed to upload image' });
+        if (storageError) {
+            console.error("Supabase Storage Error:", storageError);
+            return res.status(500).json({ error: 'Failed to upload image to storage', details: storageError });
+        }
+
+        // 2. Get Public URL
+        const { data: urlData } = supabase.storage.from('images').getPublicUrl(filePath);
+        const src = urlData.publicUrl;
+
+        // 3. Save to Database
+        const { data: dbData, error: dbError } = await supabase
+            .from('media')
+            .insert({ src, category: req.body.category, title: req.body.title })
+            .select()
+            .single();
+
+        if (dbError) {
+            return res.status(500).json({ error: 'Failed to save to database', details: dbError });
+        }
+
+        res.status(201).json(dbData);
+
+    } catch (err) {
+        console.error("Server Crash Error:", err);
+        res.status(500).json({ error: 'Server error' });
     }
+});
 
-    // 2. Get Public URL
-    const { data: urlData } = supabase.storage.from('images').getPublicUrl(filePath);
-    const publicUrl = urlData.publicUrl;
-
-    // 3. Save metadata to Database
-    const newItem = {
+// PUT (Update) media - FIXED TO HANDLE FILE UPLOADS
+app.put('/api/media/:id', checkAuth, upload.single('image'), async (req, res) => {
+    const id = req.params.id;
+    const updateData = {
         title: req.body.title,
-        category: req.body.category,
-        src: publicUrl
+        category: req.body.category
     };
 
-    const { data, error: dbError } = await supabase.from('media').insert([newItem]).select();
-    
-    if (dbError) {
-        return res.status(500).json({ error: dbError.message });
+    try {
+        // If a new file is uploaded, process it
+        if (req.file) {
+            const file = req.file;
+            const fileExt = path.extname(file.originalname);
+            const fileName = `${Date.now()}${fileExt}`;
+            const filePath = `public/${fileName}`;
+
+            // Upload new image
+            const { error: storageError } = await supabase.storage
+                .from('images')
+                .upload(filePath, file.buffer, { contentType: file.mimetype });
+
+            if (storageError) {
+                return res.status(500).json({ error: 'Failed to update image' });
+            }
+
+            // Get new URL
+            const { data: urlData } = supabase.storage.from('images').getPublicUrl(filePath);
+            updateData.src = urlData.publicUrl;
+            
+            // Optional: Here you could add logic to delete the OLD image from storage to save space
+        }
+
+        const { data, error } = await supabase
+            .from('media')
+            .update(updateData)
+            .eq('id', id)
+            .select();
+
+        if (error) return res.status(500).json({ error: error.message });
+        res.json(data[0]);
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Server error' });
     }
-    
-    res.status(201).json(data[0]);
 });
 
-app.put('/api/media/:id', checkAuth, async (req, res) => {
-    const id = req.params.id;
-    const { data, error } = await supabase
-        .from('media')
-        .update({ title: req.body.title, category: req.body.category })
-        .eq('id', id)
-        .select();
-
-    if (error) return res.status(500).json({ error: error.message });
-    res.json(data[0]);
-});
-
+// DELETE media
 app.delete('/api/media/:id', checkAuth, async (req, res) => {
     const id = req.params.id;
     
@@ -151,9 +194,8 @@ app.delete('/api/media/:id', checkAuth, async (req, res) => {
         try {
             const urlParts = item.src.split('/');
             const fileName = urlParts[urlParts.length - 1];
-            const folder = urlParts[urlParts.length - 2]; // 'public'
+            const folder = urlParts[urlParts.length - 2]; 
             const pathInBucket = `${folder}/${fileName}`;
-            
             await supabase.storage.from('images').remove([pathInBucket]);
         } catch (err) {
             console.log("Error deleting storage file, continuing DB delete");
@@ -165,70 +207,6 @@ app.delete('/api/media/:id', checkAuth, async (req, res) => {
     
     if (error) return res.status(500).json({ error: error.message });
     res.json({ message: 'Deleted' });
-});
-
-// POST new media (Upload Image + Data)
-app.post('/api/media', checkAuth, upload.single('image'), async (req, res) => {
-    try {
-        console.log("Starting upload process..."); // Log 1
-
-        if (!req.file) {
-            console.log("Error: No file uploaded");
-            return res.status(400).json({ error: 'No file uploaded' });
-        }
-
-        const file = req.file;
-        const fileExt = path.extname(file.originalname);
-        const fileName = `${Date.now()}${fileExt}`;
-        const filePath = `public/${fileName}`; // Path inside the bucket
-
-        console.log(`Uploading file: ${filePath}`); // Log 2
-
-        // 1. Upload to Supabase Storage
-        const { data: storageData, error: storageError } = await supabase.storage
-            .from('images') // Make sure this matches your bucket name exactly
-            .upload(filePath, file.buffer, {
-                contentType: file.mimetype,
-                upsert: false
-            });
-
-        if (storageError) {
-            console.error("Supabase Storage Error:", storageError); // Log 3
-            return res.status(500).json({ error: 'Failed to upload image to storage', details: storageError });
-        }
-
-        console.log("Upload successful, getting public URL..."); // Log 4
-
-        // 2. Get Public URL
-        const { data: urlData } = supabase.storage
-            .from('images')
-            .getPublicUrl(filePath);
-
-        const src = urlData.publicUrl;
-
-        // 3. Save to Database
-        const { data: dbData, error: dbError } = await supabase
-            .from('media')
-            .insert({ 
-                src: src, 
-                category: req.body.category, 
-                title: req.body.title 
-            })
-            .select()
-            .single();
-
-        if (dbError) {
-            console.error("Supabase DB Error:", dbError); // Log 5
-            return res.status(500).json({ error: 'Failed to save to database', details: dbError });
-        }
-
-        console.log("Media item created:", dbData); // Log 6
-        res.status(201).json(dbData);
-
-    } catch (err) {
-        console.error("Server Crash Error:", err); // Log 7
-        res.status(500).json({ error: 'Server error' });
-    }
 });
 
 // 3. CONTACT FORM

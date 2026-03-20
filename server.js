@@ -86,47 +86,62 @@ app.get('/api/media', async (req, res) => {
 });
 
 // POST new media (Upload Image + Data)
+// POST new media (Upload Image + Data)
 app.post('/api/media', checkAuth, upload.single('image'), async (req, res) => {
     try {
-        if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
+        console.log("--- Starting Media Upload ---");
+        
+        if (!req.file) {
+            console.log("Error: No file in request");
+            return res.status(400).json({ error: 'No file uploaded' });
+        }
 
         const file = req.file;
         const fileExt = path.extname(file.originalname);
         const fileName = `${Date.now()}${fileExt}`;
-        const filePath = `public/${fileName}`;
+        const filePath = `public/${fileName}`; 
+
+        console.log(`Target Bucket: images`);
+        console.log(`Target Path: ${filePath}`);
 
         // 1. Upload to Supabase Storage
         const { data: storageData, error: storageError } = await supabase.storage
-            .from('images') // Ensure this bucket exists in Supabase
+            .from('images') 
             .upload(filePath, file.buffer, {
                 contentType: file.mimetype,
                 upsert: false
             });
 
         if (storageError) {
-            console.error("Supabase Storage Error:", storageError);
-            return res.status(500).json({ error: 'Failed to upload image to storage', details: storageError });
+            console.error("!!! SUPABASE STORAGE ERROR:", storageError);
+            return res.status(500).json({ error: 'Storage Error', details: storageError.message });
         }
+
+        console.log("Storage Upload Successful");
 
         // 2. Get Public URL
         const { data: urlData } = supabase.storage.from('images').getPublicUrl(filePath);
         const src = urlData.publicUrl;
 
         // 3. Save to Database
+        const newItem = { src, category: req.body.category, title: req.body.title };
+
         const { data: dbData, error: dbError } = await supabase
             .from('media')
-            .insert({ src, category: req.body.category, title: req.body.title })
+            .insert(newItem)
             .select()
             .single();
 
         if (dbError) {
-            return res.status(500).json({ error: 'Failed to save to database', details: dbError });
+            console.error("!!! SUPABASE DATABASE ERROR:", dbError);
+            return res.status(500).json({ error: 'Database Error', details: dbError.message });
         }
 
+        console.log("Database Save Successful:", dbData);
         res.status(201).json(dbData);
 
     } catch (err) {
-        console.error("Server Crash Error:", err);
+        console.error("!!! SERVER CRASH:", err);
         res.status(500).json({ error: 'Server error' });
     }
 });

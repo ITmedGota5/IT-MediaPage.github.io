@@ -326,7 +326,7 @@
         <i class="fa-solid fa-pen-to-square"></i>
     </button>
 
-        <script>
+            <script>
         // --- STATE ---
         let mediaData = [];
         let isAdminMode = false;
@@ -338,7 +338,15 @@
                 ...options.headers,
                 'x-auth-token': authToken
             };
-            return fetch(url, options);
+            const res = await fetch(url, options);
+            
+            // FIX: If server says 'Not Authorized', force logout immediately
+            if (res.status === 403) {
+                alert('Din session har gått ut. Vänligen logga in igen.');
+                toggleAdminMode(false); // Force logout
+                throw new Error('Session Expired');
+            }
+            return res;
         }
 
         // --- LOGIN LOGIC ---
@@ -364,21 +372,21 @@
         });
 
         function toggleAdminMode(forceState = null) {
-            const shouldBeAdmin = forceState !== null ? forceState : !isAdminMode;
+            let newState = forceState !== null ? forceState : !isAdminMode;
             
-            // If we want to be admin but have no token, show login
-            if(shouldBeAdmin && !authToken) {
+            // If we want to turn ON admin mode, but we have no token, show login
+            if(newState && !authToken) {
                 document.getElementById('login-modal').classList.add('active');
                 return;
             }
 
-            // If we are forcing log out
-            if (!shouldBeAdmin) {
+            // If we force log out (false), clear token
+            if (!newState) {
                 authToken = null;
                 localStorage.removeItem('authToken');
             }
 
-            isAdminMode = shouldBeAdmin;
+            isAdminMode = newState;
             const body = document.body;
             const btn = document.getElementById('admin-toggle');
             
@@ -433,8 +441,13 @@
                 grid.appendChild(card);
             });
 
-            // This controls the "Add Image" button visibility
-            document.getElementById('add-new-btn').classList.toggle('hidden', !isAdminMode);
+            // Strictly control the Add button visibility
+            const addBtn = document.getElementById('add-new-btn');
+            if (isAdminMode) {
+                addBtn.classList.remove('hidden');
+            } else {
+                addBtn.classList.add('hidden');
+            }
         }
 
         // --- MODAL LOGIC ---
@@ -489,12 +502,18 @@
             let method = 'POST';
             if (id) { url = `/api/media/${id}`; method = 'PUT'; }
 
-            const response = await authFetch(url, { method: method, body: formData });
-            if(response.ok) { 
-                await loadMedia(); 
-                closeModal('edit-modal'); 
-            } else {
-                alert('Kunde inte spara.'); 
+            try {
+                const response = await authFetch(url, { method: method, body: formData });
+                if(response.ok) { 
+                    await loadMedia(); 
+                    closeModal('edit-modal'); 
+                } else {
+                    const errorData = await response.json();
+                    console.error("Save Error:", errorData);
+                    alert('Kunde inte spara: ' + (errorData.error || 'Okänt fel')); 
+                }
+            } catch (err) {
+                console.error("Network Error:", err);
             }
         });
 
@@ -509,7 +528,9 @@
         // --- INIT ---
         loadMedia();
         
-        // AUTO-LOGIN CHECK: If we have a token, verify it by trying to enter admin mode
+        // AUTO-LOGIN CHECK
+        // If we have a token, try to toggle admin mode. 
+        // If the token is bad (checked by authFetch later), it will log out.
         if(authToken) {
             toggleAdminMode(true);
         }

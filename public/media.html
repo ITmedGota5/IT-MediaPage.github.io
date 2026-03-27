@@ -128,7 +128,7 @@
         .admin-mode .admin-controls {
             display: flex;
         }
-        .admin-mode .media-card {
+        .admin-mode .media-card, .admin-mode .video-container {
             border: 2px dashed #009FE3;
             cursor: default; /* Reset cursor in admin mode */
         }
@@ -230,12 +230,21 @@
             <!-- Featured Video -->
             <div class="mb-16">
                 <h2 class="font-display text-2xl md:text-3xl text-brand-black mb-6 text-center">Senaste Filmen</h2>
-                <div class="relative rounded-xl overflow-hidden shadow-2xl aspect-video bg-gray-900 cursor-pointer group">
-                    <img src="https://picsum.photos/seed/hoganas-video/1200/675.jpg" alt="Play Video" class="w-full h-full object-cover group-hover:opacity-50 transition-opacity duration-300">
-                    <div class="absolute inset-0 flex items-center justify-center z-10">
-                        <div class="bg-brand-red w-20 h-20 md:w-24 md:h-24 rounded-full flex items-center justify-center shadow-lg border-4 border-white/20">
-                            <i class="fa-solid fa-play text-white text-3xl md:text-4xl ml-1"></i>
-                        </div>
+                
+                <div id="featured-video-container" class="relative rounded-xl overflow-hidden shadow-2xl aspect-video bg-gray-900 group video-container">
+                    <!-- Content injected by JS -->
+                    <div id="video-content-area" class="w-full h-full">
+                         <!-- Placeholder or Video -->
+                    </div>
+
+                    <!-- Admin Controls for Video -->
+                    <div class="admin-controls absolute top-4 right-4 z-20" onclick="event.stopPropagation()">
+                        <button onclick="openVideoModal()" class="bg-white text-brand-black p-2 rounded-full shadow hover:bg-brand-blue hover:text-white transition text-sm" title="Redigera film">
+                            <i class="fa-solid fa-pen"></i>
+                        </button>
+                        <button onclick="deleteVideo()" id="delete-video-btn" class="bg-white text-brand-red p-2 rounded-full shadow hover:bg-brand-red hover:text-white transition text-sm hidden" title="Radera film">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -271,26 +280,32 @@
         <div class="absolute inset-0 bg-black/70" onclick="closeModal('edit-modal')"></div>
         <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-xl shadow-2xl w-full max-w-lg p-8 z-10">
             <div class="flex justify-between items-center mb-6">
-                <h3 class="font-display text-2xl text-brand-black">Redigera Bild</h3>
+                <h3 id="modal-title" class="font-display text-2xl text-brand-black">Redigera Bild</h3>
                 <button onclick="closeModal('edit-modal')" class="text-gray-400 hover:text-brand-red text-2xl">&times;</button>
             </div>
             <form id="edit-form" class="space-y-4">
                 <input type="hidden" id="edit-id">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Kategori</label>
-                    <input type="text" id="edit-category" class="w-full border border-gray-300 rounded px-4 py-2 focus:ring-2 focus:ring-brand-blue outline-none" placeholder="T.ex. Natur">
-                </div>
+                <input type="hidden" id="edit-type" value="image"> <!-- New: Distinguish image vs video -->
+                
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Titel</label>
                     <input type="text" id="edit-title" class="w-full border border-gray-300 rounded px-4 py-2 focus:ring-2 focus:ring-brand-blue outline-none" placeholder="T.ex. Solnedgång">
                 </div>
+                
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Bild</label>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Kategori</label>
+                    <input type="text" id="edit-category" class="w-full border border-gray-300 rounded px-4 py-2 focus:ring-2 focus:ring-brand-blue outline-none" placeholder="T.ex. Natur">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Fil</label>
                     <input type="file" id="edit-file" accept="image/*" class="hidden" onchange="handleFileSelect(event)">
                     <button type="button" onclick="document.getElementById('edit-file').click()" class="px-4 py-2 bg-gray-100 border border-gray-300 rounded text-sm hover:bg-gray-200 transition w-full text-left">
-                        <i class="fa-solid fa-upload mr-2"></i> <span id="file-label">Välj ny bild...</span>
+                        <i class="fa-solid fa-upload mr-2"></i> <span id="file-label">Välj fil...</span>
                     </button>
+                    <p id="file-hint" class="text-xs text-gray-400 mt-1">Accepterar: bilder</p>
                 </div>
+
                 <div class="pt-4 flex gap-4">
                     <button type="button" onclick="closeModal('edit-modal')" class="w-1/2 py-2 border border-gray-300 rounded font-semibold hover:bg-gray-100 transition">Avbryt</button>
                     <button type="submit" class="w-1/2 btn-primary py-2 rounded font-semibold">Spara</button>
@@ -327,6 +342,7 @@
             <script>
         // --- STATE ---
         let mediaData = [];
+        let featuredVideo = null; // Holds the video object { src: '', title: '' }
         let isAdminMode = false;
         let authToken = localStorage.getItem('authToken');
 
@@ -338,10 +354,9 @@
             };
             const res = await fetch(url, options);
             
-            // FIX: If server says 'Not Authorized', force logout immediately
             if (res.status === 403) {
                 alert('Din session har gått ut. Vänligen logga in igen.');
-                toggleAdminMode(false); // Force logout
+                toggleAdminMode(false); 
                 throw new Error('Session Expired');
             }
             return res;
@@ -372,13 +387,11 @@
         function toggleAdminMode(forceState = null) {
             let newState = forceState !== null ? forceState : !isAdminMode;
             
-            // If we want to turn ON admin mode, but we have no token, show login
             if(newState && !authToken) {
                 document.getElementById('login-modal').classList.add('active');
                 return;
             }
 
-            // If we force log out (false), clear token
             if (!newState) {
                 authToken = null;
                 localStorage.removeItem('authToken');
@@ -398,6 +411,7 @@
                 btn.classList.add('bg-brand-black');
             }
             renderGallery();
+            renderFeaturedVideo(); // Re-render to show/hide controls
         }
 
         // --- DATA LOADING ---
@@ -409,7 +423,52 @@
             } catch (error) { console.error(error); }
         }
 
+        async function loadFeaturedVideo() {
+            try {
+                const response = await fetch('/api/video');
+                if (response.ok) {
+                    featuredVideo = await response.json();
+                } else {
+                    featuredVideo = null;
+                }
+                renderFeaturedVideo();
+            } catch (error) {
+                console.error("Could not load video", error);
+                featuredVideo = null;
+                renderFeaturedVideo();
+            }
+        }
+
         // --- RENDER ---
+        
+        // Render Video Section
+        function renderFeaturedVideo() {
+            const container = document.getElementById('video-content-area');
+            const delBtn = document.getElementById('delete-video-btn');
+            
+            if (featuredVideo && featuredVideo.src) {
+                // Show Video Player
+                container.innerHTML = `
+                    <video controls class="w-full h-full object-cover" src="${featuredVideo.src}">
+                        Din webbläsare stödjer inte videouppspelning.
+                    </video>
+                `;
+                if (delBtn) delBtn.classList.remove('hidden');
+            } else {
+                // Show Placeholder
+                container.innerHTML = `
+                    <img src="https://picsum.photos/seed/hoganas-video-placeholder/1200/675.jpg" alt="Play Video" class="w-full h-full object-cover group-hover:opacity-50 transition-opacity duration-300">
+                    <div class="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
+                        <div class="bg-brand-red w-20 h-20 md:w-24 md:h-24 rounded-full flex items-center justify-center shadow-lg border-4 border-white/20 opacity-50">
+                            <i class="fa-solid fa-video text-white text-3xl md:text-4xl"></i>
+                        </div>
+                    </div>
+                `;
+                if (delBtn) delBtn.classList.add('hidden');
+            }
+        }
+
+        // Render Image Gallery
         function renderGallery() {
             const grid = document.getElementById('media-grid');
             grid.innerHTML = '';
@@ -439,7 +498,6 @@
                 grid.appendChild(card);
             });
 
-            // Strictly control the Add button visibility
             const addBtn = document.getElementById('add-new-btn');
             if (isAdminMode) {
                 addBtn.classList.remove('hidden');
@@ -456,18 +514,61 @@
             document.getElementById('view-modal').classList.add('active');
         }
 
+        // Open Modal for Gallery Image
         function openModal(id = null) {
+            const modalTitle = document.getElementById('modal-title');
+            const fileInput = document.getElementById('edit-file');
+            const fileHint = document.getElementById('file-hint');
+            
+            // Reset for Image Mode
+            modalTitle.innerText = "Redigera Bild";
+            fileInput.accept = "image/*";
+            fileHint.innerText = "Accepterar: jpg, png, gif";
+            document.getElementById('edit-type').value = 'image';
+            document.getElementById('edit-category').disabled = false;
+
             document.getElementById('edit-modal').classList.remove('hidden');
+            
             if (id) {
                 const item = mediaData.find(i => i.id === id);
                 document.getElementById('edit-id').value = id;
                 document.getElementById('edit-category').value = item.category;
                 document.getElementById('edit-title').value = item.title;
-                document.getElementById('file-label').innerText = 'Välj ny bild...';
+                document.getElementById('file-label').innerText = 'Behåll nuvarande bild';
             } else {
                 document.getElementById('edit-form').reset();
                 document.getElementById('edit-id').value = '';
                 document.getElementById('file-label').innerText = 'Välj ny bild...';
+            }
+        }
+
+        // Open Modal for Featured Video
+        function openVideoModal() {
+            const modalTitle = document.getElementById('modal-title');
+            const fileInput = document.getElementById('edit-file');
+            const fileHint = document.getElementById('file-hint');
+            
+            // Set for Video Mode
+            modalTitle.innerText = "Redigera Film";
+            fileInput.accept = "video/*";
+            fileHint.innerText = "Accepterar: mp4, webm, mov";
+            document.getElementById('edit-type').value = 'video';
+            
+            // Videos don't need a category
+            document.getElementById('edit-category').value = ''; 
+            document.getElementById('edit-category').disabled = true;
+
+            document.getElementById('edit-modal').classList.remove('hidden');
+            
+            if (featuredVideo && featuredVideo.src) {
+                document.getElementById('edit-id').value = 'featured'; // ID for video
+                document.getElementById('edit-title').value = featuredVideo.title || '';
+                document.getElementById('file-label').innerText = 'Behåll nuvarande film';
+            } else {
+                document.getElementById('edit-form').reset();
+                document.getElementById('edit-id').value = 'featured';
+                document.getElementById('edit-title').value = '';
+                document.getElementById('file-label').innerText = 'Välj film...';
             }
         }
 
@@ -489,21 +590,38 @@
         // --- API ACTIONS ---
         document.getElementById('edit-form').addEventListener('submit', async function(e) {
             e.preventDefault();
+            
+            const type = document.getElementById('edit-type').value;
             const id = document.getElementById('edit-id').value;
             const formData = new FormData();
-            formData.append('category', document.getElementById('edit-category').value);
+            
             formData.append('title', document.getElementById('edit-title').value);
-            const fileInput = document.getElementById('edit-file');
-            if (fileInput.files[0]) formData.append('image', fileInput.files[0]);
+            
+            // Only append category for images
+            if (type === 'image') {
+                formData.append('category', document.getElementById('edit-category').value);
+            }
 
-            let url = '/api/media';
+            const fileInput = document.getElementById('edit-file');
+            if (fileInput.files[0]) formData.append(type === 'image' ? 'image' : 'video', fileInput.files[0]);
+
+            let url = type === 'video' ? '/api/video' : '/api/media';
             let method = 'POST';
-            if (id) { url = `/api/media/${id}`; method = 'PUT'; }
+            
+            if (id && type === 'image') { 
+                url = `/api/media/${id}`; 
+                method = 'PUT'; 
+            }
+            // For video, we usually replace the single featured video (PUT/POST logic depends on backend, assuming simple upload/update)
 
             try {
                 const response = await authFetch(url, { method: method, body: formData });
                 if(response.ok) { 
-                    await loadMedia(); 
+                    if (type === 'video') {
+                        await loadFeaturedVideo();
+                    } else {
+                        await loadMedia(); 
+                    }
                     closeModal('edit-modal'); 
                 } else {
                     const errorData = await response.json();
@@ -516,19 +634,29 @@
         });
 
         async function deleteItem(id) {
-            if(confirm('Är du säker?')) {
+            if(confirm('Är du säker på att du vill radera bilden?')) {
                 const res = await authFetch(`/api/media/${id}`, { method: 'DELETE' });
                 if(res.ok) await loadMedia();
                 else alert('Kunde inte radera.');
             }
         }
 
+        async function deleteVideo() {
+            if(confirm('Är du säker på att du vill radera filmen?')) {
+                const res = await authFetch('/api/video', { method: 'DELETE' });
+                if(res.ok) {
+                    featuredVideo = null;
+                    renderFeaturedVideo();
+                } else {
+                    alert('Kunde inte radera filmen.');
+                }
+            }
+        }
+
         // --- INIT ---
         loadMedia();
+        loadFeaturedVideo();
         
-        // AUTO-LOGIN CHECK
-        // If we have a token, try to toggle admin mode. 
-        // If the token is bad (checked by authFetch later), it will log out.
         if(authToken) {
             toggleAdminMode(true);
         }

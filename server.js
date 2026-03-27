@@ -19,12 +19,18 @@ const validTokens = new Set();
 
 // Middleware
 app.use(cors());
-app.use(express.json());
+// Increased limit for JSON and URL-encoded bodies to handle large payloads if needed
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // --- MULTER CONFIG (Memory Storage for Supabase) ---
 const storage = multer.memoryStorage();
-const upload = multer({ storage: storage });
+// Increased limit for multer to handle video files (e.g., 50MB)
+const upload = multer({ 
+    storage: storage,
+    limits: { fileSize: 50 * 1024 * 1024 } 
+});
 
 // --- AUTH ROUTES ---
 app.post('/api/login', (req, res) => {
@@ -86,13 +92,9 @@ app.get('/api/media', async (req, res) => {
 });
 
 // POST new media (Upload Image + Data)
-// POST new media (Upload Image + Data)
 app.post('/api/media', checkAuth, upload.single('image'), async (req, res) => {
     try {
-        console.log("--- Starting Media Upload ---");
-        
         if (!req.file) {
-            console.log("Error: No file in request");
             return res.status(400).json({ error: 'No file uploaded' });
         }
 
@@ -101,10 +103,7 @@ app.post('/api/media', checkAuth, upload.single('image'), async (req, res) => {
         const fileName = `${Date.now()}${fileExt}`;
         const filePath = `public/${fileName}`; 
 
-        console.log(`Target Bucket: images`);
-        console.log(`Target Path: ${filePath}`);
-
-        // 1. Upload to Supabase Storage
+        // Upload to Supabase Storage
         const { data: storageData, error: storageError } = await supabase.storage
             .from('images') 
             .upload(filePath, file.buffer, {
@@ -113,17 +112,14 @@ app.post('/api/media', checkAuth, upload.single('image'), async (req, res) => {
             });
 
         if (storageError) {
-            console.error("!!! SUPABASE STORAGE ERROR:", storageError);
             return res.status(500).json({ error: 'Storage Error', details: storageError.message });
         }
 
-        console.log("Storage Upload Successful");
-
-        // 2. Get Public URL
+        // Get Public URL
         const { data: urlData } = supabase.storage.from('images').getPublicUrl(filePath);
         const src = urlData.publicUrl;
 
-        // 3. Save to Database
+        // Save to Database
         const newItem = { src, category: req.body.category, title: req.body.title };
 
         const { data: dbData, error: dbError } = await supabase
@@ -133,20 +129,18 @@ app.post('/api/media', checkAuth, upload.single('image'), async (req, res) => {
             .single();
 
         if (dbError) {
-            console.error("!!! SUPABASE DATABASE ERROR:", dbError);
             return res.status(500).json({ error: 'Database Error', details: dbError.message });
         }
 
-        console.log("Database Save Successful:", dbData);
         res.status(201).json(dbData);
 
     } catch (err) {
-        console.error("!!! SERVER CRASH:", err);
+        console.error(err);
         res.status(500).json({ error: 'Server error' });
     }
 });
 
-// PUT (Update) media - FIXED TO HANDLE FILE UPLOADS
+// PUT (Update) media
 app.put('/api/media/:id', checkAuth, upload.single('image'), async (req, res) => {
     const id = req.params.id;
     const updateData = {
@@ -155,14 +149,12 @@ app.put('/api/media/:id', checkAuth, upload.single('image'), async (req, res) =>
     };
 
     try {
-        // If a new file is uploaded, process it
         if (req.file) {
             const file = req.file;
             const fileExt = path.extname(file.originalname);
             const fileName = `${Date.now()}${fileExt}`;
             const filePath = `public/${fileName}`;
 
-            // Upload new image
             const { error: storageError } = await supabase.storage
                 .from('images')
                 .upload(filePath, file.buffer, { contentType: file.mimetype });
@@ -171,11 +163,8 @@ app.put('/api/media/:id', checkAuth, upload.single('image'), async (req, res) =>
                 return res.status(500).json({ error: 'Failed to update image' });
             }
 
-            // Get new URL
             const { data: urlData } = supabase.storage.from('images').getPublicUrl(filePath);
             updateData.src = urlData.publicUrl;
-            
-            // Optional: Here you could add logic to delete the OLD image from storage to save space
         }
 
         const { data, error } = await supabase
@@ -188,7 +177,6 @@ app.put('/api/media/:id', checkAuth, upload.single('image'), async (req, res) =>
         res.json(data[0]);
 
     } catch (err) {
-        console.error(err);
         res.status(500).json({ error: 'Server error' });
     }
 });
@@ -197,14 +185,12 @@ app.put('/api/media/:id', checkAuth, upload.single('image'), async (req, res) =>
 app.delete('/api/media/:id', checkAuth, async (req, res) => {
     const id = req.params.id;
     
-    // 1. Get the item to find the image URL
     const { data: item } = await supabase
         .from('media')
         .select('src')
         .eq('id', id)
         .single();
 
-    // 2. Delete from Storage
     if (item && item.src) {
         try {
             const urlParts = item.src.split('/');
@@ -217,14 +203,122 @@ app.delete('/api/media/:id', checkAuth, async (req, res) => {
         }
     }
 
-    // 3. Delete from Database
     const { error } = await supabase.from('media').delete().eq('id', id);
     
     if (error) return res.status(500).json({ error: error.message });
     res.json({ message: 'Deleted' });
 });
 
-// 3. CONTACT FORM
+// 3. VIDEO ROUTES (NEW)
+
+// GET featured video
+app.get('/api/video', async (req, res) => {
+    try {
+        const { data, error } = await supabase
+            .from('featured_video')
+            .select('*')
+            .eq('id', 1)
+            .single();
+
+        if (error && error.code !== 'PGRST116') throw error;
+        
+        res.json(data || null);
+    } catch (err) {
+        res.status(500).json({ error: 'Kunde inte hämta video' });
+    }
+});
+
+// POST (Upload/Update) featured video
+app.post('/api/video', checkAuth, upload.single('video'), async (req, res) => {
+    if (!req.file) {
+        return res.status(400).json({ error: 'Ingen fil vald.' });
+    }
+
+    try {
+        const file = req.file;
+        const title = req.body.title || '';
+        const fileExt = path.extname(file.originalname);
+        // Store in 'videos' folder inside 'images' bucket
+        const fileName = `videos/featured_${Date.now()}${fileExt}`;
+
+        // 1. Upload to 'images' bucket
+        const { data: storageData, error: storageError } = await supabase.storage
+            .from('images')
+            .upload(fileName, file.buffer, {
+                contentType: file.mimetype,
+                upsert: false
+            });
+
+        if (storageError) {
+            console.error("Upload Error:", storageError);
+            return res.status(500).json({ error: storageError.message });
+        }
+
+        // 2. Get Public URL
+        const { data: urlData } = supabase.storage
+            .from('images')
+            .getPublicUrl(fileName);
+
+        const publicUrl = urlData.publicUrl;
+
+        // 3. Delete old video file if it exists (to save space)
+        const { data: oldData } = await supabase.from('featured_video').select('src').eq('id', 1).single();
+        if (oldData && oldData.src) {
+            try {
+                // Extract path relative to bucket: "videos/filename.mp4"
+                const oldPath = oldData.src.split('/images/')[1];
+                if (oldPath) {
+                    await supabase.storage.from('images').remove([oldPath]);
+                }
+            } catch (e) {
+                console.log("Could not delete old video file", e);
+            }
+        }
+
+        // 4. Upsert DB (Update id=1 or Insert)
+        const { error: dbError } = await supabase
+            .from('featured_video')
+            .upsert(
+                { id: 1, title: title, src: publicUrl },
+                { onConflict: 'id' }
+            );
+
+        if (dbError) throw dbError;
+
+        res.json({ success: true, video: { title, src: publicUrl } });
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
+// DELETE featured video
+app.delete('/api/video', checkAuth, async (req, res) => {
+    try {
+        const { data: current } = await supabase
+            .from('featured_video')
+            .select('src')
+            .eq('id', 1)
+            .single();
+
+        if (current && current.src) {
+            const oldPath = current.src.split('/images/')[1];
+            if (oldPath) {
+                await supabase.storage.from('images').remove([oldPath]);
+            }
+        }
+
+        await supabase.from('featured_video').delete().eq('id', 1);
+        
+        res.json({ success: true });
+    } catch (err) {
+        res.status(500).json({ error: 'Kunde inte radera video' });
+    }
+});
+
+
+// 4. CONTACT FORM
 app.post('/api/contact', (req, res) => {
     const { name, email, message } = req.body;
     console.log(`New Contact Form Submission: Name: ${name}, Email: ${email}`);

@@ -92,7 +92,7 @@
             position: relative;
             overflow: hidden;
             border-radius: 0.5rem;
-            cursor: zoom-in; /* Indicates clickable */
+            cursor: zoom-in;
         }
         .media-card img {
             transition: transform 0.5s ease;
@@ -105,7 +105,7 @@
             inset: 0;
             background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 60%);
             transition: background 0.3s ease;
-            pointer-events: none; /* Let clicks pass through to image */
+            pointer-events: none;
         }
         .media-card:hover .media-overlay {
             background: linear-gradient(to top, rgba(0,96,156,0.9) 0%, rgba(0,96,156,0.4) 100%);
@@ -123,14 +123,14 @@
             z-index: 20;
             display: none;
             gap: 0.5rem;
-            pointer-events: auto; /* Ensure buttons are clickable */
+            pointer-events: auto;
         }
         .admin-mode .admin-controls {
             display: flex;
         }
         .admin-mode .media-card, .admin-mode .video-container {
             border: 2px dashed #009FE3;
-            cursor: default; /* Reset cursor in admin mode */
+            cursor: default;
         }
         
         /* Login Modal CSS */
@@ -153,7 +153,7 @@
             display: none;
             position: fixed;
             inset: 0;
-            z-index: 500; /* High z-index */
+            z-index: 500;
             background: rgba(0, 0, 0, 0.9);
             justify-content: center;
             align-items: center;
@@ -191,7 +191,6 @@
                     <a href="projects.html" class="nav-link text-sm uppercase tracking-wider">Projekt</a>
                     <a href="about.html" class="nav-link text-sm uppercase tracking-wider">Om Oss</a>
                     <a href="index.html#kontakt" class="nav-link text-sm uppercase tracking-wider">Kontakt</a>
-                    
                 </div>
 
                 <!-- Mobile Menu Button -->
@@ -232,10 +231,7 @@
                 <h2 class="font-display text-2xl md:text-3xl text-brand-black mb-6 text-center">Senaste Filmen</h2>
                 
                 <div id="featured-video-container" class="relative rounded-xl overflow-hidden shadow-2xl aspect-video bg-gray-900 group video-container">
-                    <!-- Content injected by JS -->
-                    <div id="video-content-area" class="w-full h-full">
-                         <!-- Placeholder or Video -->
-                    </div>
+                    <div id="video-content-area" class="w-full h-full"></div>
 
                     <!-- Admin Controls for Video -->
                     <div class="admin-controls absolute top-4 right-4 z-20" onclick="event.stopPropagation()">
@@ -280,26 +276,27 @@
         <div class="absolute inset-0 bg-black/70" onclick="closeModal('edit-modal')"></div>
         <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-xl shadow-2xl w-full max-w-lg p-8 z-10">
             <div class="flex justify-between items-center mb-6">
-                <h3 id="modal-title" class="font-display text-2xl text-brand-black">Redigera Bild</h3>
+                <h3 id="modal-title" class="font-display text-2xl text-brand-black">Redigera</h3>
                 <button onclick="closeModal('edit-modal')" class="text-gray-400 hover:text-brand-red text-2xl">&times;</button>
             </div>
             <form id="edit-form" class="space-y-4">
                 <input type="hidden" id="edit-id">
-                <input type="hidden" id="edit-type" value="image"> <!-- New: Distinguish image vs video -->
+                <input type="hidden" id="edit-type" value="image">
                 
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Titel</label>
-                    <input type="text" id="edit-title" class="w-full border border-gray-300 rounded px-4 py-2 focus:ring-2 focus:ring-brand-blue outline-none" placeholder="T.ex. Solnedgång">
-                </div>
-                
-                <div>
+                <!-- Category Wrapper - Hidden for video -->
+                <div id="category-wrapper">
                     <label class="block text-sm font-medium text-gray-700 mb-1">Kategori</label>
                     <input type="text" id="edit-category" class="w-full border border-gray-300 rounded px-4 py-2 focus:ring-2 focus:ring-brand-blue outline-none" placeholder="T.ex. Natur">
                 </div>
 
                 <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Titel</label>
+                    <input type="text" id="edit-title" class="w-full border border-gray-300 rounded px-4 py-2 focus:ring-2 focus:ring-brand-blue outline-none" placeholder="T.ex. Solnedgång">
+                </div>
+
+                <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Fil</label>
-                    <input type="file" id="edit-file" accept="image/*" class="hidden" onchange="handleFileSelect(event)">
+                    <input type="file" id="edit-file" class="hidden" onchange="handleFileSelect(event)">
                     <button type="button" onclick="document.getElementById('edit-file').click()" class="px-4 py-2 bg-gray-100 border border-gray-300 rounded text-sm hover:bg-gray-200 transition w-full text-left">
                         <i class="fa-solid fa-upload mr-2"></i> <span id="file-label">Välj fil...</span>
                     </button>
@@ -308,7 +305,7 @@
 
                 <div class="pt-4 flex gap-4">
                     <button type="button" onclick="closeModal('edit-modal')" class="w-1/2 py-2 border border-gray-300 rounded font-semibold hover:bg-gray-100 transition">Avbryt</button>
-                    <button type="submit" class="w-1/2 btn-primary py-2 rounded font-semibold">Spara</button>
+                    <button type="submit" id="submit-btn" class="w-1/2 btn-primary py-2 rounded font-semibold">Spara</button>
                 </div>
             </form>
         </div>
@@ -342,7 +339,7 @@
             <script>
         // --- STATE ---
         let mediaData = [];
-        let featuredVideo = null; // Holds the video object { src: '', title: '' }
+        let featuredVideo = null;
         let isAdminMode = false;
         let authToken = localStorage.getItem('authToken');
 
@@ -411,7 +408,7 @@
                 btn.classList.add('bg-brand-black');
             }
             renderGallery();
-            renderFeaturedVideo(); // Re-render to show/hide controls
+            renderFeaturedVideo();
         }
 
         // --- DATA LOADING ---
@@ -441,26 +438,24 @@
 
         // --- RENDER ---
         
-        // Render Video Section
         function renderFeaturedVideo() {
             const container = document.getElementById('video-content-area');
             const delBtn = document.getElementById('delete-video-btn');
             
             if (featuredVideo && featuredVideo.src) {
-                // Show Video Player
                 container.innerHTML = `
-                    <video controls class="w-full h-full object-cover" src="${featuredVideo.src}">
+                    <video controls class="w-full h-full object-cover" src="${featuredVideo.src}" title="${featuredVideo.title || ''}">
                         Din webbläsare stödjer inte videouppspelning.
                     </video>
                 `;
                 if (delBtn) delBtn.classList.remove('hidden');
             } else {
-                // Show Placeholder
                 container.innerHTML = `
-                    <img src="https://picsum.photos/seed/hoganas-video-placeholder/1200/675.jpg" alt="Play Video" class="w-full h-full object-cover group-hover:opacity-50 transition-opacity duration-300">
+                    <img src="https://picsum.photos/seed/hoganas-video-placeholder/1200/675.jpg" alt="No video" class="w-full h-full object-cover opacity-50">
                     <div class="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
-                        <div class="bg-brand-red w-20 h-20 md:w-24 md:h-24 rounded-full flex items-center justify-center shadow-lg border-4 border-white/20 opacity-50">
-                            <i class="fa-solid fa-video text-white text-3xl md:text-4xl"></i>
+                        <div class="text-center text-white">
+                            <i class="fa-solid fa-video-slash text-4xl mb-2 opacity-70"></i>
+                            <p class="text-sm opacity-70">Ingen film uppladdad</p>
                         </div>
                     </div>
                 `;
@@ -468,7 +463,6 @@
             }
         }
 
-        // Render Image Gallery
         function renderGallery() {
             const grid = document.getElementById('media-grid');
             grid.innerHTML = '';
@@ -499,11 +493,8 @@
             });
 
             const addBtn = document.getElementById('add-new-btn');
-            if (isAdminMode) {
-                addBtn.classList.remove('hidden');
-            } else {
-                addBtn.classList.add('hidden');
-            }
+            if (isAdminMode) addBtn.classList.remove('hidden');
+            else addBtn.classList.add('hidden');
         }
 
         // --- MODAL LOGIC ---
@@ -516,59 +507,55 @@
 
         // Open Modal for Gallery Image
         function openModal(id = null) {
-            const modalTitle = document.getElementById('modal-title');
-            const fileInput = document.getElementById('edit-file');
-            const fileHint = document.getElementById('file-hint');
-            
-            // Reset for Image Mode
-            modalTitle.innerText = "Redigera Bild";
-            fileInput.accept = "image/*";
-            fileHint.innerText = "Accepterar: jpg, png, gif";
+            // Setup UI for IMAGE mode
+            document.getElementById('modal-title').innerText = id ? "Redigera Bild" : "Ny Bild";
             document.getElementById('edit-type').value = 'image';
-            document.getElementById('edit-category').disabled = false;
-
+            document.getElementById('edit-file').accept = "image/*";
+            document.getElementById('file-hint').innerText = "Accepterar: jpg, png, gif";
+            document.getElementById('category-wrapper').style.display = 'block';
+            
             document.getElementById('edit-modal').classList.remove('hidden');
             
+            // Reset form logic
+            document.getElementById('edit-form').reset();
+            document.getElementById('edit-id').value = id || '';
+            document.getElementById('file-label').innerText = 'Välj bild...';
+            // Explicitly clear file input to avoid "fakepath" issues
+            document.getElementById('edit-file').value = ''; 
+
             if (id) {
                 const item = mediaData.find(i => i.id === id);
-                document.getElementById('edit-id').value = id;
-                document.getElementById('edit-category').value = item.category;
-                document.getElementById('edit-title').value = item.title;
-                document.getElementById('file-label').innerText = 'Behåll nuvarande bild';
-            } else {
-                document.getElementById('edit-form').reset();
-                document.getElementById('edit-id').value = '';
-                document.getElementById('file-label').innerText = 'Välj ny bild...';
+                if(item) {
+                    document.getElementById('edit-category').value = item.category;
+                    document.getElementById('edit-title').value = item.title;
+                    document.getElementById('file-label').innerText = 'Behåll nuvarande bild';
+                }
             }
         }
 
         // Open Modal for Featured Video
         function openVideoModal() {
-            const modalTitle = document.getElementById('modal-title');
-            const fileInput = document.getElementById('edit-file');
-            const fileHint = document.getElementById('file-hint');
-            
-            // Set for Video Mode
-            modalTitle.innerText = "Redigera Film";
-            fileInput.accept = "video/*";
-            fileHint.innerText = "Accepterar: mp4, webm, mov";
+            // Setup UI for VIDEO mode
+            document.getElementById('modal-title').innerText = "Redigera Film";
             document.getElementById('edit-type').value = 'video';
+            document.getElementById('edit-file').accept = "video/*";
+            document.getElementById('file-hint').innerText = "Accepterar: mp4, webm, mov";
             
-            // Videos don't need a category
-            document.getElementById('edit-category').value = ''; 
-            document.getElementById('edit-category').disabled = true;
-
+            // HIDE CATEGORY FOR VIDEO
+            document.getElementById('category-wrapper').style.display = 'none';
+            
             document.getElementById('edit-modal').classList.remove('hidden');
-            
+
+            // Reset form logic
+            document.getElementById('edit-form').reset();
+            document.getElementById('edit-id').value = 'featured';
+            document.getElementById('edit-category').value = ''; 
+            document.getElementById('file-label').innerText = 'Välj film...';
+            document.getElementById('edit-file').value = ''; 
+
             if (featuredVideo && featuredVideo.src) {
-                document.getElementById('edit-id').value = 'featured'; // ID for video
                 document.getElementById('edit-title').value = featuredVideo.title || '';
                 document.getElementById('file-label').innerText = 'Behåll nuvarande film';
-            } else {
-                document.getElementById('edit-form').reset();
-                document.getElementById('edit-id').value = 'featured';
-                document.getElementById('edit-title').value = '';
-                document.getElementById('file-label').innerText = 'Välj film...';
             }
         }
 
@@ -593,29 +580,39 @@
             
             const type = document.getElementById('edit-type').value;
             const id = document.getElementById('edit-id').value;
+            const submitBtn = document.getElementById('submit-btn');
             const formData = new FormData();
             
             formData.append('title', document.getElementById('edit-title').value);
             
-            // Only append category for images
+            // Category only for images
             if (type === 'image') {
                 formData.append('category', document.getElementById('edit-category').value);
             }
 
             const fileInput = document.getElementById('edit-file');
-            if (fileInput.files[0]) formData.append(type === 'image' ? 'image' : 'video', fileInput.files[0]);
+            
+            // Append file only if selected
+            if (fileInput.files[0]) {
+                formData.append(type === 'image' ? 'image' : 'video', fileInput.files[0]);
+            }
 
+            // Determine URL and Method
             let url = type === 'video' ? '/api/video' : '/api/media';
             let method = 'POST';
             
-            if (id && type === 'image') { 
+            if (type === 'image' && id) { 
                 url = `/api/media/${id}`; 
                 method = 'PUT'; 
             }
-            // For video, we usually replace the single featured video (PUT/POST logic depends on backend, assuming simple upload/update)
 
             try {
+                // UI Feedback
+                submitBtn.disabled = true;
+                submitBtn.innerText = 'Sparar...';
+
                 const response = await authFetch(url, { method: method, body: formData });
+                
                 if(response.ok) { 
                     if (type === 'video') {
                         await loadFeaturedVideo();
@@ -630,6 +627,10 @@
                 }
             } catch (err) {
                 console.error("Network Error:", err);
+            } finally {
+                // Reset Button
+                submitBtn.disabled = false;
+                submitBtn.innerText = 'Spara';
             }
         });
 
@@ -661,7 +662,6 @@
             toggleAdminMode(true);
         }
 
-        // Mobile Menu
         document.getElementById('mobile-menu-btn').addEventListener('click', () => {
             document.getElementById('mobile-menu').classList.toggle('open');
         });

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Projects</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background: #050505; font-family: 'Inter', sans-serif; }
+
+        .grid-bg {
+            background-size: 40px 40px;
+            background-image:
+                linear-gradient(to right, rgba(255,255,255,0.03) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255,255,255,0.03) 1px, transparent 1px);
+        }
+
+        .project-row {
+            transition: all 0.3s ease;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+        .project-row:hover {
+            background: rgba(255,255,255,0.03);
+            padding-left: 1.5rem;
+        }
+        .project-row:hover .arrow { opacity: 1; transform: translateX(0); }
+        .project-row:hover .project-title { color: #fff; }
+
+        .arrow {
+            opacity: 0;
+            transform: translateX(-8px);
+            transition: all 0.3s ease;
+        }
+
+        .tag {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .fade-up { animation: fadeUp 0.6s ease forwards; }
+        .fade-up-d1 { animation-delay: 0.1s; opacity: 0; }
+        .fade-up-d2 { animation-delay: 0.2s; opacity: 0; }
+        .fade-up-d3 { animation-delay: 0.3s; opacity: 0; }
+        .fade-up-d4 { animation-delay: 0.4s; opacity: 0; }
+
+        .glow-line {
+            height: 1px;
+            background: linear-gradient(to right, transparent, rgba(255,255,255,0.15), transparent);
+        }
+    </style>
+</head>
+<body class="text-white antialiased">
+
+    <div class="grid-bg min-h-screen flex flex-col">
+
+        <!-- Nav -->
+        <nav class="w-full px-6 md:px-12 py-6 flex items-center justify-between fade-up">
+            <a href="about.html" class="text-sm font-semibold tracking-widest uppercase text-white/80 hover:text-white transition-colors">Start Sida</a>
+            <a href="mailto:hello@example.com" class="text-sm font-medium text-white/40 hover:text-white/80 transition-colors">Contact</a>
+        </nav>
+
+        <!-- Hero -->
+        <header class="px-6 md:px-12 pt-20 md:pt-32 pb-16 md:pb-24 max-w-5xl">
+            <h1 class="text-4xl md:text-6xl font-medium tracking-tight leading-[1.1] text-white fade-up fade-up-d1">
+                Game Projects
+            </h1>
+            <p class="mt-5 text-base md:text-lg text-white/40 leading-relaxed max-w-xl fade-up fade-up-d2">
+                A curated collection of game projects — prototypes, releases, and works in progress.
+            </p>
+        </header>
+
+        <div class="glow-line mx-6 md:mx-12 fade-up fade-up-d2"></div>
+
+        <!-- Projects List -->
+        <main class="px-0 md:px-0 flex-1" id="projects">
+            <!-- Rows rendered by JS -->
+        </main>
+
+        <div class="glow-line mx-6 md:mx-12"></div>
+
+        <!-- Footer -->
+        <footer class="px-6 md:px-12 py-8 flex items-center justify-between">
+            <span class="text-xs text-white/20">&copy; 2025</span>
+            <a href="#projects" class="text-xs text-white/20 hover:text-white/50 transition-colors">Back to top ↑</a>
+        </footer>
+
+    </div>
+
+    <script>
+        const projects = [
+            {
+                title: "NEON PING PONG",
+                description: "Old school ping pong",
+                tag: "Release",
+                tagColor: "text-green-400/80",
+                year: "2026",
+                link: "Games/PingPong.html"
+            }
+        ];
+
+        const container = document.getElementById('projects');
+
+        projects.forEach((p, i) => {
+            const row = document.createElement('a');
+            row.href = p.link;
+            row.className = `project-row flex items-center justify-between px-6 md:px-12 py-6 md:py-8 cursor-pointer group fade-up`;
+            row.style.animationDelay = `${0.3 + i * 0.07}s`;
+            row.style.opacity = '0';
+
+            row.innerHTML = `
+                <div class="flex-1 min-w-0 mr-6">
+                    <div class="flex items-center gap-3 mb-1.5">
+                        <h2 class="project-title text-base md:text-xl font-medium tracking-tight text-white/80 transition-colors">${p.title}</h2>
+                        <span class="tag text-[10px] font-medium tracking-wider uppercase px-2 py-0.5 rounded-full ${p.tagColor}">${p.tag}</span>
+                    </div>
+                    <p class="text-sm text-white/30 leading-relaxed truncate">${p.description}</p>
+                </div>
+                <div class="flex items-center gap-6 shrink-0">
+                    <span class="text-xs text-white/20 font-medium hidden md:block">${p.year}</span>
+                    <span class="arrow text-white/50 text-sm">→</span>
+                </div>
+            `;
+
+            container.appendChild(row);
+        });
+    </script>
+
+</body>
+</html>

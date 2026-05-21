@@ -1,22 +1,47 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="sv">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Game Projects</title>
+    <title>IT/MEDIA Höganäs - Spel</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['"Century Gothic"', '"Apple Gothic"', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            black: '#000000',
+                            white: '#FFFFFF',
+                            red: '#E30613',
+                            beige: '#B5A38F',
+                            blue: '#009FE3',
+                        },
+                        surface: {
+                            light: '#C7DEED',
+                            mist: '#E3EDF4',
+                            warm: '#F4F2EE',
+                            darkblue: '#00609C'
+                        }
+                    }
                 }
             }
         }
     </script>
     <style>
         body { background: #050505; font-family: 'Inter', sans-serif; }
+
+        .font-display {
+            font-family: "Century Gothic", "Apple Gothic", sans-serif;
+            font-weight: 700;
+        }
 
         .grid-bg {
             background-size: 40px 40px;
@@ -61,16 +86,102 @@
             height: 1px;
             background: linear-gradient(to right, transparent, rgba(255,255,255,0.15), transparent);
         }
+
+        /* Dark theme navbar */
+        .nav-dark {
+            background: rgba(5, 5, 5, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .nav-link-dark {
+            position: relative;
+            color: rgb(255, 255, 255);
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+        .nav-link-dark::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: #E30613;
+            transition: width 0.3s ease;
+        }
+        .nav-link-dark:hover {
+            color: #fff;
+        }
+        .nav-link-dark:hover::after {
+            width: 100%;
+        }
+        .nav-link-dark.active {
+            color: #fff;
+        }
+        .nav-link-dark.active::after {
+            width: 100%;
+        }
+
+        .mobile-menu-dark {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-out;
+            background: rgba(0, 96, 156, 0.95);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        .mobile-menu-dark.open {
+            max-height: 1000px;
+        }
     </style>
 </head>
 <body class="text-white antialiased">
 
     <div class="grid-bg min-h-screen flex flex-col">
 
-        <!-- Nav -->
-        <nav class="w-full px-6 md:px-12 py-6 flex items-center justify-between fade-up">
-            <a href="index.html" class="text-sm font-semibold tracking-widest uppercase text-white/80 hover:text-white transition-colors">Start Sida</a>
-            <a href="mailto:hello@example.com" class="text-sm font-medium text-white/40 hover:text-white/80 transition-colors">Contact</a>
+        <!-- Navigation - Matchar huvudsidan -->
+        <nav class="nav-dark sticky top-0 z-50">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center h-20">
+                    <div class="flex items-center">
+                        <a href="index.html" class="flex items-center gap-3">
+                            <img src="/public/HOAB.png" class="h-12 w-auto rounded">
+                            <span class="font-display text-xl md:text-2xl text-white tracking-tight">IT/MEDIA <span class="text-brand-blue">Höganäs</span></span>
+                        </a>
+                    </div>
+
+                    <!-- Desktop Menu -->
+                    <div class="hidden md:flex items-center space-x-8">
+                        <a href="index.html" class="nav-link-dark text-sm uppercase tracking-wider">Start</a>
+                        <a href="media.html" class="nav-link-dark text-sm uppercase tracking-wider">Bild & Film</a>
+                        <a href="projects.html" class="nav-link-dark text-sm uppercase tracking-wider">Projekt</a>
+                        <a href="Games.html" class="nav-link-dark active text-sm uppercase tracking-wider">Spel</a>
+                        <a href="about.html" class="nav-link-dark text-sm uppercase tracking-wider">Om Oss</a>
+                        <a href="index.html#kontakt" class="nav-link-dark text-sm uppercase tracking-wider">Kontakt</a>
+                    </div>
+
+                    <!-- Mobile Menu Button -->
+                    <div class="md:hidden">
+                        <button id="mobile-menu-btn" class="text-white p-2 focus:outline-none">
+                            <i class="fa-solid fa-bars text-2xl"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mobile Menu Container -->
+            <div id="mobile-menu" class="mobile-menu-dark md:hidden">
+                <div class="px-4 py-6 space-y-6">
+                    <a href="index.html" class="block text-white text-lg font-semibold hover:text-brand-red transition">Start</a>
+                    <a href="media.html" class="block text-white text-lg font-semibold hover:text-brand-red transition">Bild & Film</a>
+                    <a href="projects.html" class="block text-white text-lg font-semibold hover:text-brand-red transition">Projekt</a>
+                    <a href="Games.html" class="block text-white text-lg font-semibold hover:text-brand-red transition">Spel</a>
+                    <a href="about.html" class="block text-white text-lg font-semibold hover:text-brand-red transition">Om Oss</a>
+                    <a href="index.html#kontakt" class="block text-white text-lg font-semibold hover:text-brand-red transition">Kontakt</a>
+                </div>
+            </div>
         </nav>
 
         <!-- Hero -->
@@ -101,6 +212,23 @@
     </div>
 
     <script>
+        // Mobile Menu Toggle
+        const menuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const menuIcon = menuBtn.querySelector('i');
+
+        menuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('open');
+            if (mobileMenu.classList.contains('open')) {
+                menuIcon.classList.remove('fa-bars');
+                menuIcon.classList.add('fa-times');
+            } else {
+                menuIcon.classList.remove('fa-times');
+                menuIcon.classList.add('fa-bars');
+            }
+        });
+
+        // Project List
         const projects = [
             {
                 title: "NEON PING PONG",

@@ -49,7 +49,7 @@
             .timeline-item { width: 100%; padding-left: 60px; padding-right: 10px; text-align: left; left: 0 !important; }
             .timeline-dot { left: 10px !important; right: auto !important; }
         }
-        .page-header { background: linear-gradient(135deg, #00609C 0%, #009FE3 100%); }
+        .page-header { background: linear-gradient(135deg, #00609C 0%, #009fe3 100%); }
 
         /* Modal Styles */
         .modal-backdrop { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(4px); display: flex; justify-content: center; align-items: center; z-index: 100; opacity: 0; visibility: hidden; transition: opacity 0.3s ease; }
@@ -97,7 +97,7 @@
     <!-- Page Header -->
     <header class="page-header py-16 md:py-20 relative overflow-hidden text-center">
         <h1 class="font-display text-4xl sm:text-5xl md:text-6xl text-white leading-tight mb-4">Pågående Projekt</h1>
-        <p class="text-lg md:text-xl text-white/90 max-w-2xl mx-auto">Följ vårt arbete med att utveckla Höganäs digitala framtid.</p>
+        <p class="text-lg md:text-xl text-white/90 max-w-2xl mx-auto">Duis est Lorem in reprehenderit elit exercitation incididunt anim.</p>
     </header>
 
     <!-- Timeline Section -->
@@ -186,9 +186,50 @@
     <!-- ADMIN TOGGLE BUTTON -->
     <button id="admin-toggle" onclick="toggleAdminMode()" class="fixed bottom-6 right-6 bg-brand-black text-white p-4 rounded-full shadow-lg hover:bg-gray-800 transition z-50"><i class="fa-solid fa-pen-to-square"></i></button>
 
-    <!-- Footer -->
+       <!-- Footer -->
     <footer class="bg-brand-black text-white py-16">
-        <div class="max-w-7xl mx-auto px-4 text-center"><p class="text-xs text-gray-500">© 2024 IT/MEDIA Höganäs.</p></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 mb-12 text-center sm:text-left">
+                <div>
+                    <h3 class="font-display text-xl mb-4">IT/MEDIA Höganäs</h3>
+                    <p class="text-gray-400 text-sm"><br>Götagatan 5<br>123 45 Höganäs</p>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4 text-sm uppercase">Digitalt</h4>
+                    <ul class="space-y-2 text-gray-400 text-sm">
+                        <li><a href="#" class="hover:text-brand-red transition">E-tjänster</a></li>
+                        <li><a href="#" class="hover:text-brand-red transition">Frågor</a></li>
+                        <li><a href="#" class="hover:text-brand-red transition">Allmänt</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4 text-sm uppercase">Information</h4>
+                    <ul class="space-y-2 text-gray-400 text-sm">
+                        <li><a href="about.html" class="hover:text-brand-red transition">Om Oss</a></li>
+                        <li><a href="#" class="hover:text-brand-red transition">Tillgänglighet</a></li>
+                        <li><a href="#" class="hover:text-brand-red transition">Cookies</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4 text-sm uppercase">Följ oss</h4>
+                    <div class="flex gap-4 justify-center sm:justify-start">
+                        <a href="#" class="text-white hover:text-brand-red transition text-xl">
+                            <i class="fa-brands fa-twitter"></i>
+                        </a>
+                        <a href="#" class="text-white hover:text-brand-red transition text-xl">
+                            <i class="fa-brands fa-facebook"></i>
+                        </a>
+                        <a href="#" class="text-white hover:text-brand-red transition text-xl">
+                            <i class="fa-brands fa-instagram"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center text-center md:text-left">
+                <p class="text-xs text-gray-500">© 2026 IT/MEDIA Höganäs. Alla rättigheter förbehållna.</p>
+            </div>
+        </div>
     </footer>
     
     <script>

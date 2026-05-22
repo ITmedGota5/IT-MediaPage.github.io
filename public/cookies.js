@@ -13,14 +13,11 @@ const CookieConsent = {
     COOKIE_EXPIRY_DAYS: 365,
 
     getConsent() {
-        // LOCAL FILE FALLBACK (localStorage)
         if (isLocalFile) {
             const data = localStorage.getItem(this.COOKIE_NAME);
             try { return data ? JSON.parse(data) : null; } 
             catch (e) { return null; }
         }
-        
-        // REAL SERVER (document.cookie)
         const name = this.COOKIE_NAME + '=';
         const decoded = decodeURIComponent(document.cookie);
         const ca = decoded.split(';');
@@ -44,14 +41,11 @@ const CookieConsent = {
             version: '1.0'
         };
 
-        // LOCAL FILE FALLBACK (localStorage)
         if (isLocalFile) {
             localStorage.setItem(this.COOKIE_NAME, JSON.stringify(consentData));
-            console.log('🍪 Consent saved to localStorage (Local File Mode):', consentData);
             return consentData;
         }
 
-        // REAL SERVER (document.cookie)
         const expires = new Date();
         expires.setTime(expires.getTime() + (this.COOKIE_EXPIRY_DAYS * 24 * 60 * 60 * 1000));
         
@@ -62,7 +56,7 @@ const CookieConsent = {
             'SameSite=Lax'
         ].join('; ');
 
-        console.log('🍪 Consent saved to real cookies:', consentData);
+        console.log('🍪 Consent saved:', consentData);
         return consentData;
     },
 
@@ -72,7 +66,6 @@ const CookieConsent = {
         } else {
             document.cookie = this.COOKIE_NAME + '=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
         }
-        console.log('🍪 Consent cleared');
     },
 
     hasConsented() {
@@ -105,7 +98,7 @@ const CookieConsent = {
 };
 
 // ============================
-// INJECT HTML INTO THE PAGE
+// INJECT HTML INTO THE PAGE (WITH DUPLICATE PREVENTION)
 // ============================
 const cookieBannerHTML = `
 <div id="cookie-banner" class="cookie-banner fixed bottom-0 left-0 right-0 z-[100] bg-white border-t-2 border-brand-blue shadow-2xl">
@@ -199,19 +192,20 @@ const cookieModalHTML = `
 </div>
 `;
 
+
 // ============================
 // WAIT FOR PAGE TO LOAD FULLY
 // ============================
 document.addEventListener('DOMContentLoaded', () => {
     
-    if (isLocalFile) {
-        console.warn('⚠️ Running on file:// protocol. Using localStorage instead of cookies for testing.');
+    // SAFETY CHECK: Only inject if it doesn't already exist in the HTML
+    if (!document.getElementById('cookie-banner')) {
+        document.body.insertAdjacentHTML('beforeend', cookieBannerHTML);
+        document.body.insertAdjacentHTML('beforeend', cookieModalHTML);
+        console.log('🍪 Cookie HTML injected into page');
+    } else {
+        console.log('🍪 Cookie HTML already exists on page. Skipping injection.');
     }
-
-    // Insert HTML into the body
-    document.body.insertAdjacentHTML('beforeend', cookieBannerHTML);
-    document.body.insertAdjacentHTML('beforeend', cookieModalHTML);
-    console.log('🍪 Cookie HTML injected into page');
 
     const cookieBanner = document.getElementById('cookie-banner');
     const cookieSettingsOverlay = document.getElementById('cookie-settings-overlay');
@@ -219,20 +213,17 @@ document.addEventListener('DOMContentLoaded', () => {
     function showBanner() { 
         setTimeout(() => {
             cookieBanner.classList.add('visible');
-            console.log('🍪 Banner shown');
         }, 500); 
     }
 
     function hideBanner() { 
         cookieBanner.classList.remove('visible'); 
-        console.log('🍪 Banner hidden');
     }
 
     function openSettings() { 
         CookieConsent.applyPreferencesToUI(CookieConsent.getConsent());
         cookieSettingsOverlay.classList.add('visible'); 
         document.body.style.overflow = 'hidden'; 
-        console.log('🍪 Settings modal opened');
     }
 
     function closeSettings() { 
@@ -300,9 +291,6 @@ document.addEventListener('DOMContentLoaded', () => {
             openSettings();
             window.scrollTo({ top: 0, behavior: 'smooth' });
         });
-        console.log('🍪 Footer cookies link connected');
-    } else {
-        console.warn('🍪 Footer cookies link NOT found - make sure id="footer-cookies-link" is on the link');
     }
 
     // ============================
@@ -310,9 +298,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // ============================
     const existingConsent = CookieConsent.getConsent();
     if (existingConsent) {
-        console.log('🍪 Existing consent found - banner will NOT show:', existingConsent);
+        console.log('🍪 Existing consent found.');
     } else {
-        console.log('🍪 No consent found - showing banner');
         showBanner();
     }
 

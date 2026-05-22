@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IT/MEDIA Höganäs - Start</title>
+    <title>IT/MEDIA Höganäs - Tillgänglighet</title>
     <script src="https://cdn.tailwindcss.com"></script>
     
     <!-- Open Sans Font -->
@@ -44,46 +44,10 @@
             background-color: #FFFFFF;
             color: #000000;
         }
-
         .font-display {
             font-family: "Century Gothic", "Apple Gothic", sans-serif;
             font-weight: 700;
         }
-
-        .btn-primary {
-            background-color: #E30613;
-            color: white;
-            transition: all 0.3s ease;
-        }
-        .btn-primary:hover {
-            background-color: #b91c1c;
-            transform: translateY(-2px);
-        }
-
-        .btn-secondary {
-            background-color: transparent;
-            border: 2px solid #009FE3;
-            color: #009FE3;
-            transition: all 0.3s ease;
-        }
-        .btn-secondary:hover {
-            background-color: #009FE3;
-            color: white;
-        }
-
-        .hero-section {
-            background: linear-gradient(135deg, #009FE3 0%, #C7DEED 100%);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .hero-pattern {
-            position: absolute;
-            inset: 0;
-            opacity: 0.1;
-            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-        }
-
         .nav-link {
             position: relative;
             color: #000;
@@ -102,7 +66,6 @@
         .nav-link:hover::after {
             width: 100%;
         }
-
         .mobile-menu {
             max-height: 0;
             overflow: hidden;
@@ -110,16 +73,6 @@
         }
         .mobile-menu.open {
             max-height: 1000px; 
-        }
-
-        /* Hide scrollbar for Chrome, Safari and Opera */
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-        /* Hide scrollbar for IE, Edge and Firefox */
-        .no-scrollbar {
-            -ms-overflow-style: none;  /* IE and Edge */
-            scrollbar-width: none;  /* Firefox */
         }
 
         /* =========================================
@@ -197,18 +150,14 @@
                         <span class="font-display text-xl md:text-2xl text-brand-black tracking-tight">IT/MEDIA <span class="text-brand-blue">Höganäs</span></span>
                     </a>
                 </div>
-                
-                <!-- Desktop Menu -->
                 <div class="hidden md:flex items-center space-x-8">
-                    <a href="index.html" class="nav-link active text-sm uppercase tracking-wider">Start</a>
+                    <a href="index.html" class="nav-link text-sm uppercase tracking-wider">Start</a>
                     <a href="media.html" class="nav-link text-sm uppercase tracking-wider">Bild & Film</a>
                     <a href="projects.html" class="nav-link text-sm uppercase tracking-wider">Projekt</a>
                     <a href="Games.html" class="nav-link text-sm uppercase tracking-wider">Spel</a>
                     <a href="about.html" class="nav-link text-sm uppercase tracking-wider">Om Oss</a>
-                    <a href="#kontakt" class="nav-link text-sm uppercase tracking-wider">Kontakt</a>
+                    <a href="index.html#kontakt" class="nav-link text-sm uppercase tracking-wider">Kontakt</a>
                 </div>
-
-                <!-- Mobile Menu Button -->
                 <div class="md:hidden">
                     <button id="mobile-menu-btn" class="text-brand-black p-2 focus:outline-none">
                         <i class="fa-solid fa-bars text-2xl"></i>
@@ -216,8 +165,6 @@
                 </div>
             </div>
         </div>
-
-        <!-- Mobile Menu Container -->
         <div id="mobile-menu" class="mobile-menu md:hidden bg-surface-darkblue">
             <div class="px-4 py-6 space-y-6">
                 <a href="index.html" class="block text-white text-lg font-semibold hover:text-brand-red transition">Start</a>
@@ -225,80 +172,84 @@
                 <a href="projects.html" class="block text-white text-lg font-semibold hover:text-brand-red transition">Projekt</a>
                 <a href="Games.html" class="block text-white text-lg font-semibold hover:text-brand-red transition">Spel</a>
                 <a href="about.html" class="block text-white text-lg font-semibold hover:text-brand-red transition">Om Oss</a>
-                <a href="#kontakt" class="block text-white text-lg font-semibold hover:text-brand-red transition">Kontakt</a>
+                <a href="index.html#kontakt" class="block text-white text-lg font-semibold hover:text-brand-red transition">Kontakt</a>
             </div>
         </div>
     </nav>
 
-    <!-- Hero Section -->
-    <section class="hero-section py-16 md:py-24 lg:py-32">
-        <div class="hero-pattern"></div>
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-            <div class="grid md:grid-cols-2 gap-12 items-center">
-                <div class="text-center md:text-left">
-                    <h1 class="font-display text-4xl sm:text-5xl md:text-7xl text-white leading-tight mb-6">
-                        IT/MEDIA<br>
-                        <span class="text-brand-red">Höganäs</span>
-                    </h1>
-                    <p class="text-base sm:text-lg text-white/90 mb-8 leading-relaxed max-w-lg mx-auto md:mx-0">
-                        Qui nostrud elit labore et non. Occaecat ullamco nisi consequat officia ut Lorem non ad eu id in minim cupidatat elit.
-                    </p>
-                    <div class="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
-                        <a href="about.html" class="btn-primary px-8 py-3 rounded-full font-semibold inline-flex items-center justify-center gap-2">
-                            Om Oss <i class="fa-solid fa-users"></i>
-                        </a>
-                        <a href="media.html" class="btn-secondary bg-white/10 border-white text-white hover:bg-white hover:text-brand-blue px-8 py-3 rounded-full font-semibold text-center">
-                            Bild & Film
-                        </a>
-                    </div>
-                </div>
-                <div class="hidden md:block">
-                    <img src="DSC_0009.png" alt="IT Media Tech" class="rounded-lg shadow-2xl border-4 border-white/20"/>
-                </div>
-            </div>
+    <!-- Page Header -->
+    <section class="bg-surface-mist py-16 md:py-20 border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h1 class="font-display text-4xl md:text-5xl text-brand-black mb-4">Tillgänglighetsredogörelse</h1>
+            <p class="text-lg text-gray-600 max-w-2xl mx-auto">Hur vi arbetar för att göra vår webbplats tillgänglig för alla.</p>
         </div>
     </section>
 
-    <!-- Contact Banner -->
-    <section id="kontakt" class="bg-surface-darkblue py-20">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10">
-            <div class="grid md:grid-cols-2 gap-12 items-center">
-                <div class="text-center md:text-left">
-                    <h2 class="font-display text-3xl md:text-4xl text-white mb-6">Kontakta IT & Media</h2>
-                    <p class="text-white/80 mb-8">Amet exercitation enim mollit aliqua esse nisi nostrud irure voluptate.</p>
-                    
-                    <div class="space-y-4 flex flex-col items-center md:items-start">
-                        <div class="flex items-center gap-4">
-                            <div class="bg-white/10 p-3 rounded">
-                                <i class="fa-solid fa-phone text-white"></i>
+    <!-- Main Content -->
+    <section class="py-16 md:py-24 bg-white">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 prose prose-lg">
+            
+            <div class="space-y-10 text-gray-700 leading-relaxed">
+                
+                <div>
+                    <h2 class="font-display text-2xl text-brand-black mb-4 flex items-center gap-3">
+                        <i class="fa-solid fa-universal-access text-brand-blue"></i> Vår ambition
+                    </h2>
+                    <p>Consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. IT/MEDIA Höganäs strävar efter att ha en tillgänglig webbplats som kan användas av så många personer som möjligt, oavsett funktionsnedsättning.</p>
+                </div>
+
+                <div>
+                    <h2 class="font-display text-2xl text-brand-black mb-4 flex items-center gap-3">
+                        <i class="fa-solid fa-code text-brand-blue"></i> Tekniska krav
+                    </h2>
+                    <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Denna webbplats är byggd för att följa lagstadgade krav för tillgänglighet enligt DOS-lagen (lagen om tillgänglighet till digital offentlig service). Vi följer riktlinjerna WCAG 2.1 på nivå AA i möjligaste mån.</p>
+                    <ul class="list-disc pl-6 mt-4 space-y-2">
+                        <li>Excepteur sint occaecat cupidatat non proident.</li>
+                        <li>Sunt in culpa qui officia deserunt mollit anim id est laborum.</li>
+                        <li>Sed ut perspiciatis unde omnis iste natus error sit voluptatem.</li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h2 class="font-display text-2xl text-brand-black mb-4 flex items-center gap-3">
+                        <i class="fa-solid fa-triangle-exclamation text-brand-blue"></i> Icke-tillgängligt innehåll
+                    </h2>
+                    <p>Ackusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa. Det finns enstaka äldre dokument på webbplatsen som inte är fullt anpassade. Vi arbetar löpande med att åtgärda dessa:</p>
+                    <ul class="list-disc pl-6 mt-4 space-y-2">
+                        <li>Vissa PDF-dokument saknar alternativtext för bilder (planerat att åtgärdas under 2025).</li>
+                        <li>Videoinnehåll saknar i dagsläget textning (arbete pågår).</li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h2 class="font-display text-2xl text-brand-black mb-4 flex items-center gap-3">
+                        <i class="fa-solid fa-handshake text-brand-blue"></i> Kontakta oss
+                    </h2>
+                    <p>At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores. Om du upplever att vår webbplats inte uppfyller tillgänglighetskraven, vänligen kontakta oss så att vi kan åtgärda problemet.</p>
+                    <div class="bg-surface-warm p-6 rounded-lg mt-6 not-prose">
+                        <div class="space-y-4 flex flex-col">
+                            <div class="flex items-center gap-4">
+                                <div class="bg-surface-darkblue/10 p-3 rounded">
+                                    <i class="fa-solid fa-phone text-surface-darkblue"></i>
+                                </div>
+                                <div class="text-left">
+                                    <p class="text-gray-500 text-xs">Telefon</p>
+                                    <p class="text-brand-black font-semibold">042-XX XX XX</p>
+                                </div>
                             </div>
-                            <div class="text-left">
-                                <p class="text-white/60 text-xs">Frågor</p>
-                                <p class="text-white font-semibold">042-XX XX XX</p>
-                            </div>
-                        </div>
-                        <div class="flex items-center gap-4">
-                            <div class="bg-white/10 p-3 rounded">
-                                <i class="fa-solid fa-envelope text-white"></i>
-                            </div>
-                            <div class="text-left">
-                                <p class="text-white/60 text-xs">E-post</p>
-                                <p class="text-white font-semibold">XXX@gmail.com</p>
+                            <div class="flex items-center gap-4">
+                                <div class="bg-surface-darkblue/10 p-3 rounded">
+                                    <i class="fa-solid fa-envelope text-surface-darkblue"></i>
+                                </div>
+                                <div class="text-left">
+                                    <p class="text-gray-500 text-xs">E-post</p>
+                                    <p class="text-brand-black font-semibold">tillganglighet@hoganas.se</p>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="bg-white/10 backdrop-blur p-6 sm:p-8 rounded-lg border border-white/20">
-                    <form class="space-y-4">
-                        <input type="text" placeholder="Ditt namn" class="w-full bg-transparent border-b border-white/40 py-2 text-white placeholder-white/60 focus:outline-none focus:border-white transition"/>
-                        <input type="email" placeholder="E-postadress" class="w-full bg-transparent border-b border-white/40 py-2 text-white placeholder-white/60 focus:outline-none focus:border-white transition"/>
-                        <textarea rows="3" placeholder="Skriv din fråga..." class="w-full bg-transparent border-b border-white/40 py-2 text-white placeholder-white/60 focus:outline-none focus:border-white transition resize-none"></textarea>
-                        <button type="submit" class="w-full bg-brand-red text-white font-semibold py-3 rounded hover:bg-red-700 transition">
-                            Skicka Ärende
-                        </button>
-                    </form>
-                </div>
             </div>
         </div>
     </section>
@@ -315,9 +266,8 @@
                     <h4 class="font-semibold mb-4 text-sm uppercase">Information</h4>
                     <ul class="space-y-2 text-gray-400 text-sm">
                         <li><a href="about.html" class="hover:text-brand-red transition">Om Oss</a></li>
-                        <!-- Changed to lowercase safe URL -->
                         <li><a href="tillganglighet.html" class="hover:text-brand-red transition">Tillgänglighet</a></li>
-                        <li><a href="#" id="footer-cookies-link" class="hover:text-brand-red transition">Cookies</a></li>
+                        <li><a href="#" id="footer-cookies-link" class="hover:text-brand-red transition cursor-pointer">Cookies</a></li>
                     </ul>
                 </div>
                 <div>
@@ -329,7 +279,6 @@
                     </div>
                 </div>
             </div>
-            
             <div class="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center text-center md:text-left">
                 <p class="text-xs text-gray-500">© 2024 IT/MEDIA Höganäs. Alla rättigheter förbehållna.</p>
                 <div class="flex gap-6 mt-4 md:mt-0 justify-center">
@@ -346,65 +295,15 @@
         const menuBtn = document.getElementById('mobile-menu-btn');
         const mobileMenu = document.getElementById('mobile-menu');
         const icon = menuBtn.querySelector('i');
-
+        
         menuBtn.addEventListener('click', () => {
             mobileMenu.classList.toggle('open');
-            if (mobileMenu.classList.contains('open')) {
-                icon.classList.remove('fa-bars');
-                icon.classList.add('fa-times');
-            } else {
-                icon.classList.remove('fa-times');
-                icon.classList.add('fa-bars');
-            }
+            icon.classList.toggle('fa-bars'); 
+            icon.classList.toggle('fa-times');
         });
-
-        // Image Scroller Logic (Wrapped in a check so it doesn't error on pages without the slider)
-        const prevBtn = document.getElementById('prevBtn');
-        const nextBtn = document.getElementById('nextBtn');
-        const sliderTrack = document.getElementById('sliderTrack');
-
-        if (prevBtn && nextBtn && sliderTrack) {
-            const slideCards = (direction) => {
-                const card = sliderTrack.querySelector("div");
-                if (!card) return;
-                const cardWidth = card.offsetWidth + 24; 
-                sliderTrack.scrollBy({ left: cardWidth * direction, behavior: 'smooth' });
-            };
-
-            prevBtn.addEventListener('click', () => slideCards(-1));
-            nextBtn.addEventListener('click', () => slideCards(1));
-        }
-
-        // CONTACT FORM SUBMISSION
-        const contactForm = document.querySelector('#kontakt form');
-        if(contactForm) {
-            contactForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const name = contactForm.querySelector('input[type="text"]').value;
-                const email = contactForm.querySelector('input[type="email"]').value;
-                const message = contactForm.querySelector('textarea').value;
-
-                try {
-                    const response = await fetch('/api/contact', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ name, email, message })
-                    });
-                    
-                    if(response.ok) {
-                        alert('Tack! Ditt meddelande har skickats.');
-                        contactForm.reset();
-                    } else {
-                        alert('Något gick fel. Försök igen.');
-                    }
-                } catch (error) {
-                    console.error(error);
-                    alert('Kunde inte skicka meddelandet.');
-                }
-            });
-        }
     </script>
-    <!-- External Cookie Script -->
+    
+    <!-- External Cookie Script (Injects Banner & Modal automatically) -->
     <script src="cookies.js"></script>
 </body>
 </html>

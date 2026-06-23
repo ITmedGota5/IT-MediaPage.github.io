@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DV IT/MEDIA Höganäs — Artiklar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                fontFamily: {
+                    sans: ['Open Sans', 'sans-serif'],
+                    display: ['"Century Gothic"', '"Apple Gothic"', 'sans-serif'],
+                },
+                colors: {
+                    brand: {
+                        black: '#000000',
+                        white: '#FFFFFF',
+                        red: '#E30613',
+                        beige: '#B5A38F',
+                        blue: '#009FE3',
+                    },
+                    surface: {
+                        light: '#C7DEED',
+                        mist: '#E3EDF4',
+                        warm: '#F4F2EE',
+                        darkblue: '#00609C'
+                    }
+                }
+            }
+        }
+    }
+</script>
+
+<style>
+:root {
+  --bg: #F4F2EE;
+  --bg-secondary: #FFFFFF;
+  --bg-card: #FFFFFF;
+  --fg: #000000;
+  --fg-muted: #555555;
+  --accent: #009FE3;
+  --accent-hover: #00609C;
+  --accent-2: #E30613;
+  --beige: #B5A38F;
+  --border: #C7DEED;
+  --border-strong: #B5A38F;
+  --bg-mist: #E3EDF4;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Open Sans', sans-serif;
+  background: var(--bg);
+  color: var(--fg);
+  line-height: 1.6;
+  overflow-x: hidden;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+h1, h2, h3, .hero-title, .article-title, .reader-title, .modal-title, .stat-value {
+  font-family: 'Century Gothic', 'Apple Gothic', sans-serif;
+}
+
+.nav-link { position: relative; padding-bottom: 4px; text-decoration: none; color: var(--fg); transition: color 0.2s; }
+.nav-link::after { content: ''; position: absolute; width: 0; height: 2px; display: block; margin-top: 4px; right: 0; background: var(--accent); transition: width 0.3s ease; }
+.nav-link:hover::after, .nav-link.active::after { width: 100%; left: 0; background: var(--accent); }
+.nav-link.active { color: var(--accent); }
+
+.search-box { position: relative; display: flex; align-items: center; }
+.search-box input { background: var(--bg-mist); border: 1px solid var(--border); color: var(--fg); padding: 0.5rem 1rem 0.5rem 2.5rem; border-radius: 4px; font-family: inherit; font-size: 0.85rem; width: 200px; transition: all 0.2s; }
+.search-box input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(0, 159, 227, 0.2); }
+.search-box i { position: absolute; left: 0.9rem; color: var(--fg-muted); font-size: 0.85rem; }
+#mobile-menu .search-box input { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2); color: white; width: 100%; }
+#mobile-menu .search-box i { color: rgba(255,255,255,0.7); }
+
+.btn { background: var(--accent); color: var(--bg-secondary); border: none; padding: 0.5rem 1.2rem; border-radius: 4px; font-family: inherit; font-weight: 600; font-size: 0.85rem; cursor: pointer; display: inline-flex; align-items: center; gap: 0.5rem; transition: all 0.2s; }
+.btn:hover { background: var(--accent-hover); }
+
+.hero { max-width: 1200px; margin: 0 auto; padding: 4rem 2rem 2rem; }
+.hero-meta { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; font-size: 0.75rem; color: var(--accent-hover); text-transform: uppercase; letter-spacing: 0.15em; font-weight: 700; }
+.hero-meta::before { content: ''; width: 40px; height: 2px; background: var(--accent); }
+.hero-title { font-weight: 700; font-size: clamp(2.2rem, 5vw, 3.8rem); line-height: 1.1; letter-spacing: -0.02em; margin-bottom: 1.5rem; max-width: 900px; color: var(--fg); }
+.hero-title em { font-style: normal; color: var(--accent); }
+.hero-subtitle { font-size: 1.1rem; color: var(--fg-muted); max-width: 600px; margin-bottom: 3rem; }
+
+.stats { display: flex; gap: 3rem; margin-bottom: 1rem; padding: 1.5rem 0; border-top: 2px solid var(--fg); border-bottom: 1px solid var(--border); }
+.stat { display: flex; flex-direction: column; }
+.stat-value { font-weight: 700; font-size: 2rem; color: var(--fg); line-height: 1; }
+.stat-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--fg-muted); margin-top: 0.5rem; }
+
+.filters { max-width: 1200px; margin: 0 auto; padding: 2rem 2rem; display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+.filter-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.15em; color: var(--fg-muted); margin-right: 0.5rem; font-weight: 600; }
+.filter-btn { background: transparent; border: 1px solid var(--border-strong); color: var(--fg); padding: 0.4rem 1rem; border-radius: 999px; font-family: inherit; font-size: 0.85rem; cursor: pointer; transition: all 0.2s; }
+.filter-btn:hover { border-color: var(--accent); color: var(--accent); }
+.filter-btn.active { background: var(--fg); color: var(--bg-secondary); border-color: var(--fg); }
+
+.articles { max-width: 1200px; margin: 0 auto; padding: 0 2rem 4rem; width: 100%; }
+.articles-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 2rem; }
+
+.article-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 4px; overflow: hidden; cursor: pointer; transition: all 0.3s ease; position: relative; display: flex; flex-direction: column; animation: fadeUp 0.5s ease backwards; }
+.article-card:hover { border-color: var(--fg); box-shadow: 0 10px 20px rgba(0,0,0,0.07); }
+.article-card.featured { grid-column: span 8; grid-row: span 2; }
+.article-card.large { grid-column: span 6; }
+.article-card.medium { grid-column: span 4; }
+.article-card.small { grid-column: span 4; }
+@media (max-width: 900px) { .article-card.featured, .article-card.large, .article-card.medium, .article-card.small { grid-column: span 12; } }
+
+.article-image { aspect-ratio: 16/9; background: var(--bg-mist); position: relative; overflow: hidden; border-bottom: 1px solid var(--border); }
+.article-card.featured .article-image { aspect-ratio: 16/10; }
+.article-image img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
+.article-card:hover .article-image img { transform: scale(1.03); }
+.article-image-placeholder { width: 100%; height: 100%; display: grid; place-items: center; background: var(--bg-mist); }
+.article-image-placeholder i { font-size: 2.5rem; color: var(--border-strong); }
+
+.article-category { position: absolute; top: 1rem; left: 1rem; background: var(--accent); color: var(--bg-secondary); font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; padding: 0.3rem 0.75rem; border-radius: 2px; z-index: 2; }
+.article-content { padding: 1.5rem; flex: 1; display: flex; flex-direction: column; }
+.article-card.featured .article-content { padding: 2rem; }
+.article-title { font-weight: 700; letter-spacing: -0.01em; line-height: 1.2; margin-bottom: 0.75rem; color: var(--fg); }
+.article-card.featured .article-title { font-size: 1.8rem; }
+.article-card.large .article-title { font-size: 1.4rem; }
+.article-card.medium .article-title, .article-card.small .article-title { font-size: 1.1rem; }
+.article-excerpt { color: var(--fg-muted); font-size: 0.95rem; margin-bottom: 1rem; flex: 1; }
+.article-card.featured .article-excerpt { font-size: 1rem; }
+.article-meta { display: flex; align-items: center; justify-content: space-between; font-size: 0.8rem; color: var(--fg-muted); padding-top: 1rem; border-top: 1px solid var(--border); }
+.article-meta-left { display: flex; align-items: center; gap: 0.5rem; font-weight: 500; }
+
+.article-actions { position: absolute; top: 1rem; right: 1rem; display: flex; gap: 0.5rem; opacity: 0; transition: opacity 0.2s; z-index: 3; }
+body.admin-mode .article-card:hover .article-actions { opacity: 1; }
+.action-btn { width: 32px; height: 32px; border-radius: 4px; background: var(--bg-secondary); border: 1px solid var(--border); color: var(--fg); cursor: pointer; display: grid; place-items: center; font-size: 0.8rem; transition: all 0.2s; }
+.action-btn:hover { background: var(--fg); color: var(--bg-secondary); border-color: var(--fg); }
+.action-btn.delete:hover { background: var(--accent-2); border-color: var(--accent-2); }
+
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1000; display: none; align-items: center; justify-content: center; padding: 2rem; opacity: 0; transition: opacity 0.3s; }
+.modal-overlay.active { display: flex; opacity: 1; }
+.modal { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 8px; max-width: 800px; width: 100%; max-height: 90vh; overflow-y: auto; position: relative; transform: scale(0.95); transition: transform 0.3s; box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
+.modal-overlay.active .modal { transform: scale(1); }
+.modal-reader { max-width: 800px; }
+.modal-editor { max-width: 700px; }
+.modal-login { max-width: 400px; }
+
+.modal-header { padding: 1.5rem 2rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; background: var(--bg-secondary); z-index: 10; }
+.modal-title { font-weight: 700; font-size: 1.25rem; color: var(--fg); }
+.modal-close { width: 32px; height: 32px; border-radius: 4px; background: transparent; border: 1px solid transparent; color: var(--fg-muted); cursor: pointer; display: grid; place-items: center; transition: all 0.2s; }
+.modal-close:hover { background: var(--bg); color: var(--fg); }
+.modal-body { padding: 2rem; }
+
+.form-group { margin-bottom: 1.25rem; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.form-label { display: block; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--fg-muted); margin-bottom: 0.5rem; font-weight: 600; }
+.form-input, .form-textarea, .form-select { width: 100%; background: var(--bg); border: 1px solid var(--border-strong); color: var(--fg); padding: 0.6rem 0.9rem; border-radius: 4px; font-family: inherit; font-size: 0.95rem; transition: border-color 0.2s; }
+.form-input:focus, .form-textarea:focus, .form-select:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(0, 159, 227, 0.2); }
+.form-textarea { resize: vertical; min-height: 120px; line-height: 1.6; }
+.form-textarea.large { min-height: 250px; }
+
+.image-preview { aspect-ratio: 16/9; background: var(--bg-mist); border: 1px dashed var(--border-strong); border-radius: 4px; overflow: hidden; display: grid; place-items: center; margin-bottom: 0.5rem; }
+.image-preview img { width: 100%; height: 100%; object-fit: cover; }
+.image-preview i { font-size: 2rem; color: var(--border-strong); }
+.image-url-row { display: flex; gap: 0.5rem; }
+.image-url-row .form-input { flex: 1; }
+
+.modal-footer { padding: 1.25rem 2rem; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 0.75rem; position: sticky; bottom: 0; background: var(--bg-secondary); }
+
+.reader-meta { display: flex; align-items: center; gap: 1rem; font-size: 0.85rem; color: var(--fg-muted); margin-bottom: 1.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+.reader-category { background: var(--accent); color: var(--bg-secondary); padding: 0.2rem 0.6rem; border-radius: 2px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; }
+.reader-title { font-weight: 700; font-size: clamp(1.8rem, 4vw, 2.5rem); line-height: 1.1; letter-spacing: -0.02em; margin-bottom: 1.5rem; color: var(--fg); }
+.reader-image { aspect-ratio: 16/9; border-radius: 4px; overflow: hidden; margin-bottom: 2rem; background: var(--bg-mist); }
+.reader-image img { width: 100%; height: 100%; object-fit: cover; }
+.reader-content { font-size: 1.05rem; line-height: 1.75; color: #333; }
+.reader-content p { margin-bottom: 1.25rem; }
+.reader-content p:first-of-type { font-size: 1.15rem; color: var(--fg); font-weight: 500; }
+.reader-empty { color: var(--fg-muted); font-style: italic; text-align: center; padding: 3rem 1rem; background: var(--bg-mist); border-radius: 4px; }
+
+.login-icon-circle { background: var(--accent-2); width: 64px; height: 64px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; color: white; }
+.login-error { color: var(--accent-2); font-size: 0.85rem; display: none; }
+
+#admin-toggle { position: fixed; bottom: 1.5rem; right: 1.5rem; background: #000000; color: white; padding: 1rem; border-radius: 9999px; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); cursor: pointer; z-index: 50; transition: background-color 0.2s; }
+#admin-toggle:hover { background: var(--accent-hover); }
+body.admin-mode #admin-toggle { background: var(--accent-2); }
+
+#newArticleBtn, #newArticleBtnMobile { display: none !important; }
+body.admin-mode #newArticleBtn, body.admin-mode #newArticleBtnMobile { display: inline-flex !important; }
+
+.toast-container { position: fixed; bottom: 5rem; right: 2rem; z-index: 2000; display: flex; flex-direction: column; gap: 0.5rem; }
+.toast { background: var(--fg); color: var(--bg-secondary); padding: 1rem 1.25rem; border-radius: 4px; display: flex; align-items: center; gap: 0.75rem; min-width: 280px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); animation: slideIn 0.3s ease; font-size: 0.9rem; }
+.toast.success { border-left: 4px solid #28a745; }
+.toast.error { border-left: 4px solid var(--accent-2); }
+.toast i { color: var(--bg-secondary); }
+.toast.success i { color: #28a745; }
+.toast.error i { color: var(--accent-2); }
+@keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+.toast.removing { animation: slideOut 0.3s ease forwards; }
+@keyframes slideOut { to { transform: translateX(100%); opacity: 0; } }
+
+@keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--fg-muted); }
+</style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav class="bg-white shadow-sm sticky top-0 z-50 border-b border-surface-light">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-20">
+            <div class="flex items-center">
+                <a href="index.html" class="flex items-center gap-3">
+                    <img src="https://media.licdn.com/dms/image/sync/v2/D4D27AQFg8zrxmYITJw/articleshare-shrink_1280_800/B4DZYE0RxhG4AQ-/0/1743837536215?e=2147483647&v=beta&t=IO8hVPQnARqYrEbcWLaLAUSY-1otsyN1MREuWcaiaKM" class="h-10 w-auto rounded" alt="Logo">
+                    <span class="font-display text-xl md:text-2xl text-brand-black tracking-tight">DV IT/MEDIA <span class="text-brand-blue">Höganäs</span></span>
+                </a>
+            </div>
+            
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="index.html" class="nav-link text-sm uppercase tracking-wider">Start</a>
+                <a href="media.html" class="nav-link text-sm uppercase tracking-wider">Bild & Film</a>
+                <a href="projects.html" class="nav-link text-sm uppercase tracking-wider">Projekt</a>
+                <a href="artical.html" class="nav-link active text-sm uppercase tracking-wider">Artiklar</a>
+                <a href="Games.html" class="nav-link text-sm uppercase tracking-wider">Spel</a>
+                <a href="about.html" class="nav-link text-sm uppercase tracking-wider">Om Oss</a>
+                <a href="index.html#kontakt" class="nav-link text-sm uppercase tracking-wider">Kontakt</a>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <div class="hidden md:flex search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchInput" placeholder="Sök..." oninput="filterArticles()">
+                </div>
+                <button class="btn hidden md:inline-flex" id="newArticleBtn" onclick="openEditor()">
+                    <i class="fas fa-plus"></i> Ny artikel
+                </button>
+                <div class="md:hidden">
+                    <button id="mobile-menu-btn" class="text-brand-black p-2 focus:outline-none">
+                        <i class="fa-solid fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="md:hidden bg-surface-darkblue hidden">
+        <div class="px-6 py-8 space-y-6">
+            <div class="search-box w-full">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInputMobile" placeholder="Sök artiklar..." oninput="syncSearch(this.value)">
+            </div>
+            <button class="btn w-full justify-center" id="newArticleBtnMobile" onclick="openEditor()">
+                <i class="fas fa-plus"></i> Ny artikel
+            </button>
+            <a href="index.html" class="block text-white text-lg font-semibold hover:text-brand-red transition">Start</a>
+            <a href="media.html" class="block text-white text-lg font-semibold hover:text-brand-red transition">Bild & Film</a>
+            <a href="projects.html" class="block text-white text-lg font-semibold hover:text-brand-red transition">Projekt</a>
+            <a href="artical.html" class="block text-white text-lg font-semibold hover:text-brand-red transition">Artiklar</a>
+            <a href="Games.html" class="block text-white text-lg font-semibold hover:text-brand-red transition">Spel</a>
+            <a href="about.html" class="block text-white text-lg font-semibold hover:text-brand-red transition">Om Oss</a>
+            <a href="index.html#kontakt" class="block text-white text-lg font-semibold hover:text-brand-red transition">Kontakt</a>
+        </div>
+    </div>
+</nav>
+
+<!-- Main Content -->
+<div style="flex: 1;">
+  <section class="hero">
+    <div class="hero-meta"><span>Din redaktionella plattform</span></div>
+    <h1 class="hero-title">Skriv, redigera och <em>publicera</em><br>dina projekt som artiklar.</h1>
+    <p class="hero-subtitle">En enkel plattform för att samla dina projekt och artiklar på ett ställe. Lägg till, redigera och ta bort — allt sparas lokalt i din webbläsare.</p>
+    <div class="stats">
+      <div class="stat"><div class="stat-value" id="statTotal">0</div><div class="stat-label">Artiklar</div></div>
+      <div class="stat"><div class="stat-value" id="statCategories">0</div><div class="stat-label">Kategorier</div></div>
+      <div class="stat"><div class="stat-value" id="statLatest">—</div><div class="stat-label">Senast uppdaterad</div></div>
+    </div>
+  </section>
+
+  <section class="filters">
+    <span class="filter-label">Kategori</span>
+    <button class="filter-btn active" data-category="all" onclick="setFilter('all')">Alla</button>
+    <button class="filter-btn" data-category="teknik" onclick="setFilter('teknik')">Teknik</button>
+    <button class="filter-btn" data-category="webb" onclick="setFilter('webb')">Webb</button>
+    <button class="filter-btn" data-category="design" onclick="setFilter('design')">Design</button>
+    <button class="filter-btn" data-category="ai" onclick="setFilter('ai')">AI</button>
+    <button class="filter-btn" data-category="projekt" onclick="setFilter('projekt')">Projekt</button>
+    <button class="filter-btn" data-category="annat" onclick="setFilter('annat')">Annat</button>
+  </section>
+
+  <main class="articles">
+    <div class="articles-grid" id="articlesGrid"></div>
+  </main>
+</div>
+
+<!-- Footer -->
+<footer class="bg-brand-black text-white py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 mb-12 text-center sm:text-left">
+            <div>
+                <h3 class="font-display text-xl mb-4">DV IT/MEDIA Höganäs</h3>
+                <p class="text-gray-400 text-sm">Götagatan 5<br>123 45 Höganäs</p>
+            </div>
+            <div>
+                <h4 class="font-semibold mb-4 text-sm uppercase">Information</h4>
+                <ul class="space-y-2 text-gray-400 text-sm">
+                    <li><a href="about.html" class="hover:text-brand-red transition">Om Oss</a></li>
+                    <li><a href="tillganglighet.html" class="hover:text-brand-red transition">Tillgänglighet</a></li>
+                    <li><a href="#" id="footer-cookies-link" class="hover:text-brand-red transition">Cookies</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-semibold mb-4 text-sm uppercase">Följ oss</h4>
+                <div class="flex gap-4 justify-center sm:justify-start">
+                    <a href="#" class="text-white hover:text-brand-red transition text-xl"><i class="fa-brands fa-twitter"></i></a>
+                    <a href="#" class="text-white hover:text-brand-red transition text-xl"><i class="fa-brands fa-facebook"></i></a>
+                    <a href="#" class="text-white hover:text-brand-red transition text-xl"><i class="fa-brands fa-instagram"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center text-center md:text-left">
+            <p class="text-xs text-gray-500">© 2026 DV IT/MEDIA Höganäs. Alla rättigheter förbehållna.</p>
+        </div>
+    </div>
+</footer>
+
+<!-- EDITOR MODAL -->
+<div class="modal-overlay" id="editorModal">
+  <div class="modal modal-editor">
+    <div class="modal-header">
+      <h2 class="modal-title" id="editorTitle">Ny artikel</h2>
+      <button class="modal-close" onclick="closeModal('editorModal')" aria-label="Stäng"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <form id="articleForm" onsubmit="saveArticle(event)">
+        <input type="hidden" id="articleId">
+        <div class="form-group">
+          <label class="form-label" for="articleTitle">Titel</label>
+          <input type="text" class="form-input" id="articleTitle" required placeholder="En slående rubrik...">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="articleCategory">Kategori</label>
+            <select class="form-select" id="articleCategory">
+              <option value="teknik">Teknik</option><option value="webb">Webb</option><option value="design">Design</option>
+              <option value="ai">AI</option><option value="projekt">Projekt</option><option value="annat">Annat</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="articleAuthor">Författare</label>
+            <input type="text" class="form-input" id="articleAuthor" placeholder="Ditt namn">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="articleExcerpt">Ingress (kort beskrivning)</label>
+          <textarea class="form-textarea" id="articleExcerpt" placeholder="En kort sammanfattning som visas i artikelkortet..."></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="articleContent">Huvudtext</label>
+          <textarea class="form-textarea large" id="articleContent" placeholder="Skriv din artikel här. Lämna tom om du vill fylla i senare."></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Bild</label>
+          <div class="image-preview" id="imagePreview"><i class="fas fa-image"></i></div>
+          <div class="image-url-row">
+            <input type="text" class="form-input" id="articleImage" placeholder="Bild-URL (https://...)" oninput="updateImagePreview()">
+            <button type="button" class="btn btn-ghost" onclick="generateRandomImage()" title="Slumpa bild"><i class="fas fa-dice"></i></button>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('editorModal')">Avbryt</button>
+      <button class="btn" onclick="saveArticle(event)"><i class="fas fa-save"></i> Spara artikel</button>
+    </div>
+  </div>
+</div>
+
+<!-- READER MODAL -->
+<div class="modal-overlay" id="readerModal">
+  <div class="modal modal-reader">
+    <div class="modal-header">
+      <h2 class="modal-title">Artikel</h2>
+      <div style="display:flex;gap:0.5rem">
+        <button class="modal-close" onclick="editFromReader()" title="Redigera" aria-label="Redigera"><i class="fas fa-pen"></i></button>
+        <button class="modal-close" onclick="closeModal('readerModal')" aria-label="Stäng"><i class="fas fa-times"></i></button>
+      </div>
+    </div>
+    <div class="modal-body" id="readerBody"></div>
+  </div>
+</div>
+
+<!-- LOGIN MODAL -->
+<div class="modal-overlay" id="loginModal">
+  <div class="modal modal-login">
+    <div class="modal-body" style="text-align: center;">
+      <div class="mb-6">
+        <div class="login-icon-circle"><i class="fa-solid fa-lock text-2xl"></i></div>
+        <h2 style="font-family: 'Century Gothic', sans-serif; font-size: 1.5rem; color: var(--fg);">Admin Inloggning</h2>
+        <p style="color: var(--fg-muted); font-size: 0.9rem; margin-top: 0.5rem;">Ange lösenordet för att redigera.</p>
+      </div>
+      <form id="login-form" onsubmit="handleLogin(event)" style="display: flex; flex-direction: column; gap: 1rem;">
+        <input type="password" id="login-password" placeholder="Lösenord" class="form-input" style="text-align: center;" required>
+        <p id="login-error" class="login-error">Fel lösenord, försök igen.</p>
+        <button type="submit" class="btn" style="justify-content: center;">Logga in</button>
+        <button type="button" onclick="closeModal('loginModal')" class="btn btn-ghost" style="justify-content: center;">Avbryt</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN TOGGLE BUTTON -->
+<button id="admin-toggle" title="Växla Admin-läge">
+  <i class="fa-solid fa-pen-to-square"></i>
+</button>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+// --- STATE ---
+let articles = [];
+let currentFilter = 'all';
+let currentSearch = '';
+let editingId = null;
+let readingId = null;
+let isAdminMode = false;
+const ADMIN_PASSWORD = "admin"; 
+
+const defaultArticles = [
+  {
+    id: 'welcome',
+    title: 'Välkommen till din artikelsida',
+    category: 'projekt',
+    author: 'DV IT/MEDIA',
+    excerpt: 'Det här är din personliga plattform för att publicera projekt och artiklar. Klicka på pennan nere i hörnet för att logga in som admin.',
+    content: 'Det här är din personliga artikelsida.\n\nFör att börja redigera:\n1. Klicka på penn-ikonen nere i det högra hörnet.\n2. Skriv in lösenordet (standard är "admin").\n3. Nu kan du skapa nya artiklar, och när du hovrar över befintliga artiklar dyker det upp knappar för att redigera eller ta bort.\n\nAllt sparas automatiskt i din webbläsare.',
+    image: '',
+    date: new Date().toISOString()
+  }
+];
+
+// --- INIT ---
+function init() {
+  loadArticles();
+  renderArticles();
+  updateStats();
+  setupMobileMenu();
+}
+
+// --- DATA ---
+function loadArticles() {
+  const stored = localStorage.getItem('it_mediapage_articles_v5');
+  if (stored) {
+    try { articles = JSON.parse(stored); } catch (e) { articles = [...defaultArticles]; }
+  } else {
+    articles = [...defaultArticles];
+    saveArticles();
+  }
+}
+function saveArticles() { localStorage.setItem('it_mediapage_articles_v5', JSON.stringify(articles)); }
+function generateId() { return Date.now().toString(36) + Math.random().toString(36).substr(2, 5); }
+
+function formatDate(iso) {
+  const d = new Date(iso); const now = new Date(); const diff = (now - d) / 1000;
+  if (diff < 60) return 'nyss';
+  if (diff < 3600) return Math.floor(diff/60) + ' min sedan';
+  if (diff < 86400) return Math.floor(diff/3600) + ' tim sedan';
+  if (diff < 604800) return Math.floor(diff/86400) + ' dagar sedan';
+  return d.toLocaleDateString('sv-SE', { day: 'numeric', month: 'short', year: 'numeric' });
+}
+function getCategoryLabel(cat) {
+  const labels = { teknik: 'Teknik', webb: 'Webb', design: 'Design', ai: 'AI', projekt: 'Projekt', annat: 'Annat' };
+  return labels[cat] || cat;
+}
+function determineSize(index, total) {
+  if (index === 0) return 'featured';
+  if (index < 3) return 'large';
+  if (index < 6) return 'medium';
+  return 'small';
+}
+function escapeHtml(text) {
+  if (!text) return '';
+  const div = document.createElement('div'); div.textContent = text; return div.innerHTML;
+}
+function formatContent(text) {
+  if (!text || !text.trim()) {
+    return '<div class="reader-empty"><i class="fas fa-feather" style="font-size:2rem;display:block;margin-bottom:1rem;"></i>Den här artikeln har ingen text än.<br><br>Klicka på penn-ikonen högst upp för att lägga till text.</div>';
+  }
+  return text.split('\n').filter(p => p.trim()).map(p => `<p>${escapeHtml(p)}</p>`).join('');
+}
+
+// --- RENDERING ---
+function renderArticles() {
+  const grid = document.getElementById('articlesGrid');
+  let filtered = articles.filter(a => {
+    const matchCategory = currentFilter === 'all' || a.category === currentFilter;
+    const matchSearch = !currentSearch || 
+      a.title.toLowerCase().includes(currentSearch) ||
+      (a.excerpt || '').toLowerCase().includes(currentSearch) ||
+      (a.content || '').toLowerCase().includes(currentSearch);
+    return matchCategory && matchSearch;
+  });
+
+  if (filtered.length === 0) {
+    grid.innerHTML = `
+      <div class="empty-state">
+        <i class="fas fa-newspaper" style="font-size: 3rem; color: var(--border-strong); margin-bottom: 1rem;"></i>
+        <h3 style="font-size: 1.5rem; color: var(--fg); margin-bottom: 0.5rem;">Inga artiklar hittades</h3>
+        <p>${currentSearch || currentFilter !== 'all' ? 'Prova att ändra filter eller sökord.' : 'Klicka på "Ny artikel" för att skapa din första artikel.'}</p>
+      </div>`;
+    return;
+  }
+
+  grid.innerHTML = filtered.map((article, i) => {
+    const size = determineSize(i, filtered.length);
+    return `
+      <article class="article-card ${size}" style="animation-delay:${i * 0.05}s" onclick="openReader('${article.id}')">
+        <div class="article-image">
+          <span class="article-category">${getCategoryLabel(article.category)}</span>
+          <div class="article-actions" onclick="event.stopPropagation()">
+            <button class="action-btn" onclick="openEditor('${article.id}')" title="Redigera"><i class="fas fa-pen"></i></button>
+            <button class="action-btn delete" onclick="deleteArticle('${article.id}')" title="Ta bort"><i class="fas fa-trash"></i></button>
+          </div>
+          ${article.image 
+            ? `<img src="${article.image}" alt="${escapeHtml(article.title)}" onerror="this.parentElement.innerHTML='<div class=&quot;article-image-placeholder&quot;><i class=&quot;fas fa-image&quot;></i></div>'">` 
+            : `<div class="article-image-placeholder"><i class="fas fa-image"></i></div>`}
+        </div>
+        <div class="article-content">
+          <h3 class="article-title">${escapeHtml(article.title)}</h3>
+          ${article.excerpt ? `<p class="article-excerpt">${escapeHtml(article.excerpt)}</p>` : '<p class="article-excerpt" style="opacity:0.5;font-style:italic;">Ingen text än — klicka för att redigera</p>'}
+          <div class="article-meta">
+            <div class="article-meta-left"><i class="fas fa-user-circle"></i><span>${escapeHtml(article.author || 'Anonym')}</span></div>
+            <span>${formatDate(article.date)}</span>
+          </div>
+        </div>
+      </article>`;
+  }).join('');
+}
+
+function updateStats() {
+  document.getElementById('statTotal').textContent = articles.length;
+  document.getElementById('statCategories').textContent = new Set(articles.map(a => a.category)).size;
+  if (articles.length > 0) {
+    const latest = articles.reduce((a, b) => new Date(a.date) > new Date(b.date) ? a : b);
+    document.getElementById('statLatest').textContent = formatDate(latest.date);
+  } else {
+    document.getElementById('statLatest').textContent = '—';
+  }
+}
+
+// --- FILTERS & SEARCH ---
+function setFilter(category) {
+  currentFilter = category;
+  document.querySelectorAll('.filter-btn').forEach(btn => { btn.classList.toggle('active', btn.dataset.category === category); });
+  renderArticles();
+}
+function filterArticles() {
+  currentSearch = document.getElementById('searchInput').value.toLowerCase().trim();
+  renderArticles();
+}
+function syncSearch(value) {
+  document.getElementById('searchInput').value = value;
+  filterArticles();
+}
+
+// --- MODALS & EDITING ---
+function openModal(id) { document.getElementById(id).classList.add('active'); }
+function closeModal(id) {
+  document.getElementById(id).classList.remove('active');
+  if (id === 'editorModal') editingId = null;
+  if (id === 'readerModal') readingId = null;
+}
+
+function openEditor(id = null) {
+  if (!isAdminMode) { showToast('Du måste logga in som admin först', 'error'); return; }
+  editingId = id;
+  const title = document.getElementById('editorTitle');
+  
+  if (id) {
+    const article = articles.find(a => a.id === id);
+    if (!article) return;
+    title.textContent = 'Redigera artikel';
+    document.getElementById('articleId').value = article.id;
+    document.getElementById('articleTitle').value = article.title;
+    document.getElementById('articleCategory').value = article.category;
+    document.getElementById('articleAuthor').value = article.author || '';
+    document.getElementById('articleExcerpt').value = article.excerpt || '';
+    document.getElementById('articleContent').value = article.content || '';
+    document.getElementById('articleImage').value = article.image || '';
+  } else {
+    title.textContent = 'Ny artikel';
+    document.getElementById('articleForm').reset();
+    document.getElementById('articleId').value = '';
+  }
+  updateImagePreview();
+  openModal('editorModal');
+  setTimeout(() => document.getElementById('articleTitle').focus(), 100);
+}
+
+function updateImagePreview() {
+  const url = document.getElementById('articleImage').value.trim();
+  const preview = document.getElementById('imagePreview');
+  if (url) {
+    preview.innerHTML = `<img src="${url}" onerror="this.parentElement.innerHTML='<i class=&quot;fas fa-image&quot;></i>'">`;
+  } else {
+    preview.innerHTML = '<i class="fas fa-image"></i>';
+  }
+}
+
+function generateRandomImage() {
+  const seed = Math.floor(Math.random() * 10000);
+  const url = `https://picsum.photos/seed/${seed}/800/450.jpg`;
+  document.getElementById('articleImage').value = url;
+  updateImagePreview();
+}
+
+function saveArticle(event) {
+  if (event) event.preventDefault();
+  const id = document.getElementById('articleId').value;
+  const data = {
+    title: document.getElementById('articleTitle').value.trim(),
+    category: document.getElementById('articleCategory').value,
+    author: document.getElementById('articleAuthor').value.trim() || 'Anonym',
+    excerpt: document.getElementById('articleExcerpt').value.trim(),
+    content: document.getElementById('articleContent').value.trim(),
+    image: document.getElementById('articleImage').value.trim()
+  };
+  if (!data.title) { showToast('Du måste ange en titel', 'error'); return; }
+  
+  if (id) {
+    const idx = articles.findIndex(a => a.id === id);
+    if (idx !== -1) {
+      articles[idx] = { ...articles[idx], ...data, date: new Date().toISOString() };
+      showToast('Artikel uppdaterad', 'success');
+    }
+  } else {
+    articles.unshift({ id: generateId(), ...data, date: new Date().toISOString() });
+    showToast('Artikel skapad', 'success');
+  }
+  saveArticles(); renderArticles(); updateStats(); closeModal('editorModal');
+}
+
+function deleteArticle(id) {
+  if (!isAdminMode) return;
+  const article = articles.find(a => a.id === id);
+  if (!article) return;
+  if (!confirm(`Vill du ta bort "${article.title}"?`)) return;
+  articles = articles.filter(a => a.id !== id);
+  saveArticles(); renderArticles(); updateStats();
+  showToast('Artikel borttagen', 'success');
+}
+
+function openReader(id) {
+  const article = articles.find(a => a.id === id);
+  if (!article) return;
+  readingId = id;
+  const body = document.getElementById('readerBody');
+  body.innerHTML = `
+    <div class="reader-meta">
+      <span class="reader-category">${getCategoryLabel(article.category)}</span>
+      <span><i class="fas fa-user"></i> ${escapeHtml(article.author || 'Anonym')}</span>
+      <span><i class="fas fa-clock"></i> ${formatDate(article.date)}</span>
+    </div>
+    <h1 class="reader-title">${escapeHtml(article.title)}</h1>
+    ${article.image ? `<div class="reader-image"><img src="${article.image}" alt="${escapeHtml(article.title)}" onerror="this.style.display='none'"></div>` : ''}
+    <div class="reader-content">${formatContent(article.content)}</div>`;
+  openModal('readerModal');
+}
+
+function editFromReader() {
+  if (!readingId) return;
+  if (!isAdminMode) { closeModal('readerModal'); showToast('Logga in som admin för att redigera', 'error'); return; }
+  const id = readingId;
+  closeModal('readerModal');
+  setTimeout(() => openEditor(id), 300);
+}
+
+// --- AUTH & ADMIN MODE ---
+function handleLogin(e) {
+  e.preventDefault();
+  const password = document.getElementById('login-password').value;
+  if (password === ADMIN_PASSWORD) {
+    isAdminMode = true;
+    document.body.classList.add('admin-mode');
+    closeModal('loginModal');
+    document.getElementById('login-error').style.display = 'none';
+    document.getElementById('login-password').value = '';
+    showToast('Admin-läge aktiverat', 'success');
+  } else {
+    document.getElementById('login-error').style.display = 'block';
+  }
+}
+
+function toggleAdminMode() {
+  if (!isAdminMode) {
+    openModal('loginModal');
+    setTimeout(() => document.getElementById('login-password').focus(), 100);
+  } else {
+    isAdminMode = false;
+    document.body.classList.remove('admin-mode');
+    showToast('Admin-läge avaktiverat', 'info');
+  }
+}
+
+// --- TOAST ---
+function showToast(message, type = 'info') {
+  const container = document.getElementById('toastContainer');
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  const icon = type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle';
+  toast.innerHTML = `<i class="fas fa-${icon}"></i><span>${message}</span>`;
+  container.appendChild(toast);
+  setTimeout(() => { toast.classList.add('removing'); setTimeout(() => toast.remove(), 300); }, 3000);
+}
+
+// --- NAVIGATION LOGIC ---
+function setupMobileMenu() {
+  const btn = document.getElementById('mobile-menu-btn');
+  const menu = document.getElementById('mobile-menu');
+  if (btn && menu) { btn.addEventListener('click', () => { menu.classList.toggle('hidden'); }); }
+}
+
+// --- EVENTS ---
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    if (document.getElementById('readerModal').classList.contains('active')) closeModal('readerModal');
+    if (document.getElementById('editorModal').classList.contains('active')) closeModal('editorModal');
+    if (document.getElementById('loginModal').classList.contains('active')) closeModal('loginModal');
+  }
+});
+
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) { closeModal(overlay.id); }
+  });
+});
+
+document.getElementById('admin-toggle').addEventListener('click', toggleAdminMode);
+
+// Start
+init();
+</script>
+ <script src="accessibility-widget.js"></script>
+</body>
+</html>

@@ -72,7 +72,6 @@ h1, h2, h3, .hero-title, .article-title, .reader-title, .modal-title, .stat-valu
   font-family: 'Century Gothic', 'Apple Gothic', sans-serif;
 }
 
-/* Uppdaterad Nav-link stil för att matcha index.html */
 .nav-link { 
   position: relative; 
   color: #000; 
@@ -93,7 +92,6 @@ h1, h2, h3, .hero-title, .article-title, .reader-title, .modal-title, .stat-valu
   width: 100%; 
 }
 
-/* Mobilmeny animation matching index.html */
 .mobile-menu {
   max-height: 0;
   overflow: hidden;
@@ -103,9 +101,6 @@ h1, h2, h3, .hero-title, .article-title, .reader-title, .modal-title, .stat-valu
   max-height: 1000px; 
 }
 
-/* =========================================
-   OPTIMERAD SÖKFUNKTION CSS
-   ========================================= */
 .search-toggle-btn { 
   background: transparent; 
   border: none; 
@@ -127,7 +122,6 @@ h1, h2, h3, .hero-title, .article-title, .reader-title, .modal-title, .stat-valu
   margin-right: 0;
 }
 .search-box-collapsible.open { 
-  /* Anpassar sig efter skärmen så den aldrig knuffar runt länkarna */
   width: clamp(150px, 20vw, 250px); 
   margin-right: 0.5rem;
 }
@@ -156,7 +150,6 @@ h1, h2, h3, .hero-title, .article-title, .reader-title, .modal-title, .stat-valu
   pointer-events: none;
 }
 
-/* Dölj "Ny artikel" knappen när sök är öppen för att spara utrymme */
 #newArticleBtn, #newArticleBtnMobile { display: none !important; }
 body.admin-mode #newArticleBtn, body.admin-mode #newArticleBtnMobile { display: inline-flex !important; }
 
@@ -166,7 +159,6 @@ body.admin-mode #newArticleBtn, body.admin-mode #newArticleBtnMobile { display: 
     }
 }
 
-/* Mobil sök */
 .search-box-mobile { 
   position: relative; 
   display: flex; 
@@ -195,6 +187,8 @@ body.admin-mode #newArticleBtn, body.admin-mode #newArticleBtnMobile { display: 
 
 .btn { background: var(--accent); color: var(--bg-secondary); border: none; padding: 0.5rem 1.2rem; border-radius: 4px; font-family: inherit; font-weight: 600; font-size: 0.85rem; cursor: pointer; display: inline-flex; align-items: center; gap: 0.5rem; transition: all 0.2s; }
 .btn:hover { background: var(--accent-hover); }
+.btn-ghost { background: transparent; color: var(--fg); border: 1px solid var(--border-strong); }
+.btn-ghost:hover { background: var(--bg); border-color: var(--fg); }
 
 .hero { max-width: 1200px; margin: 0 auto; padding: 4rem 2rem 2rem; }
 .hero-meta { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; font-size: 0.75rem; color: var(--accent-hover); text-transform: uppercase; letter-spacing: 0.15em; font-weight: 700; }
@@ -272,11 +266,11 @@ body.admin-mode .article-card:hover .article-actions { opacity: 1; }
 .form-textarea { resize: vertical; min-height: 120px; line-height: 1.6; }
 .form-textarea.large { min-height: 250px; }
 
-.image-preview { aspect-ratio: 16/9; background: var(--bg-mist); border: 1px dashed var(--border-strong); border-radius: 4px; overflow: hidden; display: grid; place-items: center; margin-bottom: 0.5rem; }
+.image-preview { aspect-ratio: 16/9; background: var(--bg-mist); border: 1px dashed var(--border-strong); border-radius: 4px; overflow: hidden; display: grid; place-items: center; margin-bottom: 0.5rem; position: relative; }
 .image-preview img { width: 100%; height: 100%; object-fit: cover; }
 .image-preview i { font-size: 2rem; color: var(--border-strong); }
-.image-url-row { display: flex; gap: 0.5rem; }
-.image-url-row .form-input { flex: 1; }
+.image-upload-row { display: flex; gap: 0.5rem; align-items: center; }
+.image-upload-row input[type="file"] { flex: 1; font-size: 0.85rem; padding: 0.4rem; border: 1px solid var(--border-strong); border-radius: 4px; background: var(--bg); cursor: pointer; }
 
 .modal-footer { padding: 1.25rem 2rem; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 0.75rem; position: sticky; bottom: 0; background: var(--bg-secondary); }
 
@@ -329,7 +323,6 @@ body.admin-mode #admin-toggle { background: var(--accent-2); }
                 </a>
             </div>
             
-            <!-- Desktop Menu (Brytpunkt ändrad till lg) -->
             <div class="hidden lg:flex items-center space-x-6 whitespace-nowrap">
                 <a href="index.html" class="nav-link text-sm uppercase tracking-wider">Start</a>
                 <a href="media.html" class="nav-link text-sm uppercase tracking-wider">Bild & Film</a>
@@ -341,7 +334,6 @@ body.admin-mode #admin-toggle { background: var(--accent-2); }
             </div>
 
             <div class="flex items-center gap-2 lg:gap-4 flex-shrink-0">
-                <!-- Expanderbar Sök (Desktop) -->
                 <div class="hidden lg:flex items-center">
                     <div id="desktopSearchContainer" class="search-box-collapsible">
                         <i class="fas fa-search"></i>
@@ -356,7 +348,6 @@ body.admin-mode #admin-toggle { background: var(--accent-2); }
                     <i class="fas fa-plus"></i> Ny artikel
                 </button>
 
-                <!-- Mobile Menu Button -->
                 <div class="lg:hidden">
                     <button id="mobile-menu-btn" class="text-brand-black p-2 focus:outline-none">
                         <i class="fa-solid fa-bars text-2xl"></i>
@@ -366,7 +357,6 @@ body.admin-mode #admin-toggle { background: var(--accent-2); }
         </div>
     </div>
 
-    <!-- Mobile Menu Container -->
     <div id="mobile-menu" class="mobile-menu lg:hidden bg-surface-darkblue">
         <div class="px-4 py-6 space-y-6">
             <div class="search-box-mobile">
@@ -458,6 +448,9 @@ body.admin-mode #admin-toggle { background: var(--accent-2); }
     <div class="modal-body">
       <form id="articleForm" onsubmit="saveArticle(event)">
         <input type="hidden" id="articleId">
+        <!-- Hidden input to store Base64 image string -->
+        <input type="hidden" id="articleImage">
+        
         <div class="form-group">
           <label class="form-label" for="articleTitle">Titel</label>
           <input type="text" class="form-input" id="articleTitle" required placeholder="En slående rubrik...">
@@ -486,9 +479,9 @@ body.admin-mode #admin-toggle { background: var(--accent-2); }
         <div class="form-group">
           <label class="form-label">Bild</label>
           <div class="image-preview" id="imagePreview"><i class="fas fa-image"></i></div>
-          <div class="image-url-row">
-            <input type="text" class="form-input" id="articleImage" placeholder="Bild-URL (https://...)" oninput="updateImagePreview()">
-            <button type="button" class="btn btn-ghost" onclick="generateRandomImage()" title="Slumpa bild"><i class="fas fa-dice"></i></button>
+          <div class="image-upload-row">
+            <input type="file" id="articleImageFile" accept="image/*" onchange="handleImageUpload(event)">
+            <button type="button" class="btn btn-ghost" onclick="removeImage()" title="Ta bort bild"><i class="fas fa-trash"></i></button>
           </div>
         </div>
       </form>
@@ -581,7 +574,17 @@ function loadArticles() {
     saveArticles();
   }
 }
-function saveArticles() { localStorage.setItem('it_mediapage_articles_v5', JSON.stringify(articles)); }
+function saveArticles() { 
+  try {
+    localStorage.setItem('it_mediapage_articles_v5', JSON.stringify(articles)); 
+  } catch (e) {
+    if (e.name === 'QuotaExceededError') {
+      showToast('För mycket data! Bilden är troligen för stor.', 'error');
+    } else {
+      console.error("Save error", e);
+    }
+  }
+}
 function generateId() { return Date.now().toString(36) + Math.random().toString(36).substr(2, 5); }
 
 function formatDate(iso) {
@@ -627,10 +630,10 @@ function renderArticles() {
 
   if (filtered.length === 0) {
     grid.innerHTML = `
-      <div class="empty-state">
+      <div class="empty-state" style="grid-column: span 12; text-align: center; padding: 4rem 2rem;">
         <i class="fas fa-newspaper" style="font-size: 3rem; color: var(--border-strong); margin-bottom: 1rem;"></i>
         <h3 style="font-size: 1.5rem; color: var(--fg); margin-bottom: 0.5rem;">Inga artiklar hittades</h3>
-        <p>${currentSearch || currentFilter !== 'all' ? 'Prova att ändra filter eller sökord.' : 'Klicka på "Ny artikel" för att skapa din första artikel.'}</p>
+        <p style="color: var(--fg-muted);">${currentSearch || currentFilter !== 'all' ? 'Prova att ändra filter eller sökord.' : 'Klicka på "Ny artikel" för att skapa din första artikel.'}</p>
       </div>`;
     return;
   }
@@ -687,7 +690,6 @@ function syncSearch(value) {
   filterArticles();
 }
 
-// --- NY FUNKTION FÖR ATT EXPANDERA SÖK ---
 function toggleDesktopSearch() {
     const container = document.getElementById('desktopSearchContainer');
     const input = document.getElementById('searchInput');
@@ -698,7 +700,6 @@ function toggleDesktopSearch() {
         setTimeout(() => input.focus(), 300);
     } else {
         document.body.classList.remove('search-open');
-        // Rensa sökningen när man stänger
         input.value = '';
         filterArticles();
     }
@@ -728,33 +729,56 @@ function openEditor(id = null) {
     document.getElementById('articleExcerpt').value = article.excerpt || '';
     document.getElementById('articleContent').value = article.content || '';
     document.getElementById('articleImage').value = article.image || '';
+    document.getElementById('articleImageFile').value = ''; // Clear file input when editing existing
   } else {
     title.textContent = 'Ny artikel';
     document.getElementById('articleForm').reset();
     document.getElementById('articleId').value = '';
+    document.getElementById('articleImage').value = '';
   }
   updateImagePreview();
   openModal('editorModal');
   setTimeout(() => document.getElementById('articleTitle').focus(), 100);
 }
 
+// --- IMAGE HANDLING (UPLOAD FROM COMPUTER) ---
+function handleImageUpload(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  // Limit file size to ~2MB to prevent localStorage quota errors
+  if (file.size > 2 * 1024 * 1024) {
+    showToast('Bilden är för stor (max 2MB). Välj en mindre bild.', 'error');
+    event.target.value = ''; // Clear the input
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    // Store the Base64 string in the hidden input
+    document.getElementById('articleImage').value = e.target.result;
+    updateImagePreview();
+  };
+  reader.readAsDataURL(file); // Converts the image to a Base64 string
+}
+
+function removeImage() {
+  document.getElementById('articleImage').value = '';
+  document.getElementById('articleImageFile').value = '';
+  updateImagePreview();
+}
+
 function updateImagePreview() {
-  const url = document.getElementById('articleImage').value.trim();
+  const src = document.getElementById('articleImage').value.trim();
   const preview = document.getElementById('imagePreview');
-  if (url) {
-    preview.innerHTML = `<img src="${url}" onerror="this.parentElement.innerHTML='<i class=&quot;fas fa-image&quot;></i>'">`;
+  if (src) {
+    preview.innerHTML = `<img src="${src}" onerror="this.parentElement.innerHTML='<i class=&quot;fas fa-image&quot;></i>'">`;
   } else {
     preview.innerHTML = '<i class="fas fa-image"></i>';
   }
 }
 
-function generateRandomImage() {
-  const seed = Math.floor(Math.random() * 10000);
-  const url = `https://picsum.photos/seed/${seed}/800/450.jpg`;
-  document.getElementById('articleImage').value = url;
-  updateImagePreview();
-}
-
+// --- SAVE & DELETE ---
 function saveArticle(event) {
   if (event) event.preventDefault();
   const id = document.getElementById('articleId').value;
@@ -764,7 +788,7 @@ function saveArticle(event) {
     author: document.getElementById('articleAuthor').value.trim() || 'Anonym',
     excerpt: document.getElementById('articleExcerpt').value.trim(),
     content: document.getElementById('articleContent').value.trim(),
-    image: document.getElementById('articleImage').value.trim()
+    image: document.getElementById('articleImage').value.trim() // This now grabs the Base64 string
   };
   if (!data.title) { showToast('Du måste ange en titel', 'error'); return; }
   
@@ -778,7 +802,10 @@ function saveArticle(event) {
     articles.unshift({ id: generateId(), ...data, date: new Date().toISOString() });
     showToast('Artikel skapad', 'success');
   }
-  saveArticles(); renderArticles(); updateStats(); closeModal('editorModal');
+  saveArticles(); 
+  renderArticles(); 
+  updateStats(); 
+  closeModal('editorModal');
 }
 
 function deleteArticle(id) {
@@ -791,6 +818,7 @@ function deleteArticle(id) {
   showToast('Artikel borttagen', 'success');
 }
 
+// --- READER ---
 function openReader(id) {
   const article = articles.find(a => a.id === id);
   if (!article) return;
@@ -869,7 +897,6 @@ function setupMobileMenu() {
       } else {
         icon.classList.remove('fa-times');
         icon.classList.add('fa-bars');
-        // Rensa sök när mobilmenyn stängs
         if (mobileInput) {
             mobileInput.value = '';
             syncSearch('');

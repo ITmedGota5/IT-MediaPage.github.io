@@ -231,4 +231,8 @@
         if (e.key === 'Escape' && overlay.classList.contains('active')) closeModal();
     });
 
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'E' && !overlay.classList.contains('active')) openModal();
+    });
+
 })();
